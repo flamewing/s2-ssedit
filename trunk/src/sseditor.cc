@@ -26,6 +26,15 @@
 
 #include "sseditor.h"
 
+#include <string>
+#include <sstream>
+#include <fstream>
+#include "kosinski.h"
+#include "nemesis.h"
+#include "ssobjfile.h"
+//#define DEBUG_DECODER 1
+//#define DEBUG_ENCODER 1
+
 #define SS_OBJECT_FILE "Special stage object location lists (Kosinski compression).bin"
 #define SS_LAYOUT_FILE "Special stage level layouts (Nemesis compression).bin"
 
@@ -44,7 +53,6 @@ sseditor::sseditor(int argc, char *argv[], char const *uifile)
 
 	// Blessed be sed...
 	pfilefilter = Glib::RefPtr<Gtk::FileFilter>::cast_dynamic(builder->get_object("filefilter"));
-	builder->get_widget("filekosinski", pfilekosinski);
 	// Labels
 	builder->get_widget("labelcurrentstage", plabelcurrentstage);
 	builder->get_widget("labeltotalstages", plabeltotalstages);
@@ -55,7 +63,6 @@ sseditor::sseditor(int argc, char *argv[], char const *uifile)
 	// Main toolbar
 	builder->get_widget("openfilebutton", popenfilebutton);
 	builder->get_widget("savefilebutton", psavefilebutton);
-	builder->get_widget("savekosinskibutton", psavekosinskibutton);
 	builder->get_widget("revertfilebutton", prevertfilebutton);
 	builder->get_widget("selectmodebutton", pselectmodebutton);
 	builder->get_widget("insertmodebutton", pinsertmodebutton);
@@ -104,8 +111,6 @@ sseditor::sseditor(int argc, char *argv[], char const *uifile)
 		sigc::mem_fun(this, &sseditor::on_openfilebutton_clicked));
 	psavefilebutton->signal_clicked().connect(
 		sigc::mem_fun(this, &sseditor::on_savefilebutton_clicked));
-	psavekosinskibutton->signal_toggled().connect(
-		sigc::mem_fun(this, &sseditor::on_savekosinskibutton_toggled));
 	prevertfilebutton->signal_clicked().connect(
 		sigc::mem_fun(this, &sseditor::on_revertfilebutton_clicked));
 	pselectmodebutton->signal_toggled().connect(
@@ -180,15 +185,6 @@ void sseditor::on_vscrollbar1_value_changed()
 
 }
 
-#include <string>
-#include <sstream>
-#include <fstream>
-#include "kosinski.h"
-#include "nemesis.h"
-#include "ssobjfile.h"
-#define DEBUG_DECODER 1
-#define DEBUG_ENCODER 1
-
 void sseditor::on_filedialog_response(int response_id)
 {
 	switch (response_id)
@@ -256,11 +252,6 @@ void sseditor::on_openfilebutton_clicked()
 }
 
 void sseditor::on_savefilebutton_clicked()
-{
-
-}
-
-void sseditor::on_savekosinskibutton_toggled()
 {
 
 }

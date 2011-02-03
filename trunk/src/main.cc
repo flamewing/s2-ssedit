@@ -25,6 +25,7 @@
 #include <fstream>
 
 /* For testing propose use the local (not installed) ui file */
+#define DEBUG 1
 #ifdef DEBUG
 #define UI_FILE "src/s2ssedit.ui"
 #else
