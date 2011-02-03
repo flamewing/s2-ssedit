@@ -31,7 +31,6 @@ private:
 	Glib::RefPtr<Gtk::Builder> builder;
 
 	Glib::RefPtr<Gtk::FileFilter> pfilefilter;
-	Gtk::CheckButton *pfilekosinski;
 	// Labels
 	Gtk::Label *plabelcurrentstage;
 	Gtk::Label *plabeltotalstages;
@@ -42,7 +41,6 @@ private:
 	// Main toolbar
 	Gtk::ToolButton *popenfilebutton;
 	Gtk::ToolButton *psavefilebutton;
-	Gtk::ToggleToolButton *psavekosinskibutton;
 	Gtk::ToolButton *prevertfilebutton;
 	Gtk::RadioToolButton *pselectmodebutton;
 	Gtk::RadioToolButton *pinsertmodebutton;
@@ -104,7 +102,6 @@ public:
 	void on_filedialog_response(int response_id);
 	void on_openfilebutton_clicked();
 	void on_savefilebutton_clicked();
-	void on_savekosinskibutton_toggled();
 	void on_revertfilebutton_clicked();
 	void on_selectmodebutton_toggled();
 	void on_insertmodebutton_toggled();
