@@ -37,6 +37,12 @@ public:
 	size_t count() const;
 	void print() const;
 	void write(std::ostream& out, std::ostream& lay) const;
+	/*size_t count() const
+	{	return segments.count();	}
+	void push_back(sssegments const& seg)
+	{	segments.push_back(seg);	}
+	void insert(size_t pos, sssegments const& seg)
+	{	segments.insert(segments.begin() + pos, seg);	}*/
 };
 
 #endif // _SSLEVELOBJS_H_
