@@ -5,17 +5,39 @@ AC_INIT(s2ssedit, 0.1)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AC_CONFIG_MACRO_DIR([m4])
 
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
+
+dnl ***************************************************************************
+dnl Host system settings
+dnl ***************************************************************************
+ICON_FILE=""
+# determine windowing system from 'host'
+AC_MSG_CHECKING([windowing system])
+case "$host_os" in
+	linux*)
+		WINDOWING_SYSTEM="-DXWIN"
+		AC_MSG_RESULT([X11 (GNU/Linux)])
+		;;
+	mingw32* )
+		WINDOWING_SYSTEM="-DWIN32"
+		AC_MSG_RESULT([Win32 (mingw32)])
+		ICON_FILE="$(builddir)/s2ssedit.ico.o"
+		;;
+	*)
+		WINDOWING_SYSTEM="-DXWIN"
+		AC_MSG_RESULT([system still unsupported... guessing X11])
+		;;
+esac
 
 AC_ISC_POSIX
 AC_PROG_CXX
 AM_PROG_CC_STDC
 AC_HEADER_STDC
-
-
-
 
 dnl ***************************************************************************
 dnl Internatinalization
@@ -26,16 +48,9 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [GETTEXT package name])
 AM_GLIB_GNU_GETTEXT
 IT_PROG_INTLTOOL([0.35.0])
 
-
-
 AM_PROG_LIBTOOL
 
-
-
 PKG_CHECK_MODULES(S2SSEDIT, [gtkmm-2.4 >= 2.12    ])
-
-
-
 
 AC_OUTPUT([
 Makefile
