@@ -26,13 +26,15 @@ case "$host_os" in
 	mingw32* )
 		WINDOWING_SYSTEM="-DWIN32"
 		ICON_FILE="s2ssedit.ico.o"
-		AC_DEFINE(BUILD_ICON, 1, [Win32 (mingw32)])
+		AC_MSG_RESULT([Win32 (mingw32)])
 		;;
 	*)
 		WINDOWING_SYSTEM="-DXWIN"
 		AC_MSG_RESULT([system still unsupported... guessing X11])
 		;;
 esac
+
+AM_CONDITIONAL(BUILD_ICON, test ! x$ICON_FILE = x)
 
 AC_ISC_POSIX
 AC_PROG_CXX
