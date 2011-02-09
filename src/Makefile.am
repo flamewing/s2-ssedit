@@ -39,7 +39,11 @@ s2ssedit_LDFLAGS = \
 
 s2ssedit_LDADD = $(S2SSEDIT_LIBS)
 
-s2ssedit_DEPENDENCIES = $(ICON_FILE)
+if BUILD_ICON
+	s2ssedit_DEPENDENCIES = $(builddir)/$(ICON_FILE)
+else !BUILD_ICON
+	s2ssedit_DEPENDENCIES = $(ICON_FILE)
+endif
 
 EXTRA_DIST = $(ui_DATA) \
 	bomb.png\

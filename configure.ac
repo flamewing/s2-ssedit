@@ -25,8 +25,8 @@ case "$host_os" in
 		;;
 	mingw32* )
 		WINDOWING_SYSTEM="-DWIN32"
-		AC_MSG_RESULT([Win32 (mingw32)])
-		ICON_FILE="$(builddir)/s2ssedit.ico.o"
+		ICON_FILE="s2ssedit.ico.o"
+		AC_DEFINE(BUILD_ICON, 1, [Win32 (mingw32)])
 		;;
 	*)
 		WINDOWING_SYSTEM="-DXWIN"
@@ -51,6 +51,8 @@ IT_PROG_INTLTOOL([0.35.0])
 AM_PROG_LIBTOOL
 
 PKG_CHECK_MODULES(S2SSEDIT, [gtkmm-2.4 >= 2.12    ])
+
+AC_SUBST(ICON_FILE)
 
 AC_OUTPUT([
 Makefile
