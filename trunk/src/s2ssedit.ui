@@ -224,7 +224,7 @@
                 <child>
                   <object class="GtkImage" id="image1">
                     <property name="visible">True</property>
-                    <property name="icon_name">zoom-best-fit</property>
+                    <property name="stock">gtk-zoom-fit</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
