@@ -37,12 +37,12 @@ s2ssedit_LDFLAGS = \
 	$(builddir)/lib/libkosinski.la \
 	$(builddir)/lib/libnemesis.la
 
-s2ssedit_LDADD = $(S2SSEDIT_LIBS)
-
 if BUILD_ICON
 	s2ssedit_DEPENDENCIES = $(builddir)/$(ICON_FILE)
+	s2ssedit_LDADD = $(S2SSEDIT_LIBS) $(builddir)/$(ICON_FILE)
 else !BUILD_ICON
 	s2ssedit_DEPENDENCIES = $(ICON_FILE)
+	s2ssedit_LDADD = $(S2SSEDIT_LIBS)
 endif
 
 EXTRA_DIST = $(ui_DATA) \
