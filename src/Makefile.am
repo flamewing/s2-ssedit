@@ -39,7 +39,11 @@ s2ssedit_LDFLAGS = \
 
 s2ssedit_LDADD = $(S2SSEDIT_LIBS)
 
-EXTRA_DIST = $(ui_DATA)
+EXTRA_DIST = $(ui_DATA) \
+	bomb.png\
+	ring.png\
+	ring.svg\
+	bomb.svg
 
 SUBDIRS = \
 	lib\
