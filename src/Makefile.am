@@ -39,6 +39,8 @@ s2ssedit_LDFLAGS = \
 
 s2ssedit_LDADD = $(S2SSEDIT_LIBS)
 
+s2ssedit_DEPENDENCIES = $(ICON_FILE)
+
 EXTRA_DIST = $(ui_DATA) \
 	bomb.png\
 	ring.png\
@@ -53,6 +55,9 @@ SUBDIRS = \
 	tools
 
 AM_CXXFLAGS = 
+
+$(builddir)/s2ssedit.ico.o: $(srcdir)/ssedit.rc $(srcdir)/ssedit.ico
+	windres $(srcdir)/ssedit.rc $(builddir)/s2ssedit.ico.o
 
 # Remove ui directory on uninstall
 uninstall-local:
