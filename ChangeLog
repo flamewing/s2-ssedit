@@ -1,6 +1,9 @@
 2011-02-10 Flamewing <flamewing.sonic@gmail.com>
 	* src/main.cc, src/sseditor.cc: Disabling 'DEBUG'.
 	* src/Makefile.am: Fixed install of images in *nix.
+	* sseditor.cc: Drawing improvements. Ctrl key can be used in insertion mode
+	  to constrain the position of the new bomb or ring. Properly set scrollbar
+	  limits so that last segment ends at the end of the scrollable area.
 
 2011-02-09 Flamewing <flamewing.sonic@gmail.com>
 	* Special Stage editor fully works in Linux.
