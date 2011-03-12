@@ -1,3 +1,11 @@
+2011-03-12 Flamewing <flamewing.sonic@gmail.com>
+	* src/lib/nemesis.*: Fixed decompression bug which did not take the code
+	  length into consideration when decoding.
+
+2011-02-28 Flamewing <flamewing.sonic@gmail.com>
+	* src/lib/nemesis.cc: Package-merge version of Nemesis encoder for optimal
+	  encoded file size.
+
 2011-02-10 Flamewing <flamewing.sonic@gmail.com>
 	* src/main.cc, src/sseditor.cc: Disabling 'DEBUG'.
 	* src/Makefile.am: Fixed install of images in *nix.
