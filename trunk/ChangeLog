@@ -1,3 +1,8 @@
+2011-03-14 Flamewing <flamewing.sonic@gmail.com>
+	* src/lib/enigma.cc: Fixed decompressor -- it wasn't properly decoding some
+	  files -- and improved compressor -- now features better compression than
+	  the KENS original.
+
 2011-03-12 Flamewing <flamewing.sonic@gmail.com>
 	* src/lib/nemesis.*: Fixed decompression bug which did not take the code
 	  length into consideration when decoding.
