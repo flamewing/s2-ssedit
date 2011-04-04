@@ -185,6 +185,7 @@ int main(int argc, char *argv[])
 
 			dstdplc.write(outdplc);
 			outdplc.close();
+			break;
 		}
 		case eSplit:
 		{
@@ -209,6 +210,7 @@ int main(int argc, char *argv[])
 
 			dstdplc.write(outdplc);
 			outdplc.close();
+			break;
 		}
 		case eMerge:
 		{
@@ -233,6 +235,7 @@ int main(int argc, char *argv[])
 
 			dstmaps.write(outmaps, sonic2);
 			outmaps.close();
+			break;
 		}
 		case eFix:
 		{
@@ -248,6 +251,7 @@ int main(int argc, char *argv[])
 
 			srcmaps.write(outmaps, sonic2);
 			outmaps.close();
+			break;
 		}
 		case eConvert:
 		{
@@ -263,6 +267,7 @@ int main(int argc, char *argv[])
 
 			srcmaps.write(outmaps, tosonic2);
 			outmaps.close();
+			break;
 		}
 		case eInfo:
 		{
@@ -273,6 +278,7 @@ int main(int argc, char *argv[])
 			srcmaps.read(inmaps, fromsonic2);
 			inmaps.close();
 			srcmaps.print();
+			break;
 		}
 		case eDplc:
 		{
@@ -283,6 +289,7 @@ int main(int argc, char *argv[])
 			srcdplc.read(indplc);
 			indplc.close();
 			srcdplc.print();
+			break;
 		}
 		case ePalChange:
 		{
@@ -304,6 +311,7 @@ int main(int argc, char *argv[])
 
 			srcmaps.write(outmaps, sonic2);
 			outmaps.close();
+			break;
 		}
 	}
 	

@@ -3,15 +3,25 @@ bin_PROGRAMS = \
 	enicmp\
 	koscmp \
 	nemcmp \
-	plame_map
+	plane_map \
+	mapping_tool
 
-plame_map_SOURCES = \
+mapping_tool_SOURCES = \
+	mapping_tool.cc
+
+mapping_tool_LDFLAGS = \
+	$(builddir)/../lib/libmappings.la
+
+mapping_tool_CXXFLAGS = \
+	-I$(srcdir)/../lib
+
+plane_map_SOURCES = \
 	plane_map.cc
 
-plame_map_LDFLAGS = \
+plane_map_LDFLAGS = \
 	$(builddir)/../lib/libenigma.la
 
-plame_map_CXXFLAGS = \
+plane_map_CXXFLAGS = \
 	-I$(srcdir)/../lib
 
 nemcmp_SOURCES = \
