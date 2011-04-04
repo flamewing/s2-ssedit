@@ -4,7 +4,18 @@ bin_PROGRAMS = \
 	koscmp \
 	nemcmp \
 	plane_map \
-	mapping_tool
+	mapping_tool \
+	recolor_art
+
+recolor_art_SOURCES = \
+	recolor_art.cc
+
+recolor_art_LDFLAGS = \
+	$(builddir)/../lib/libnemesis.la \
+	$(builddir)/../lib/libkosinski.la
+
+recolor_art_CXXFLAGS = \
+	-I$(srcdir)/../lib
 
 mapping_tool_SOURCES = \
 	mapping_tool.cc

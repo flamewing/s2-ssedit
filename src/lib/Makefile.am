@@ -2,7 +2,25 @@
 lib_LTLIBRARIES = \
 	libenigma.la\
 	libkosinski.la \
-	libnemesis.la
+	libnemesis.la \
+	libmappings.la
+
+libmappings_la_SOURCES = \
+	singledplc.h    \
+	singledplc.cc    \
+	framedplc.h    \
+	framedplc.cc    \
+	dplcfile.h    \
+	dplcfile.cc    \
+	singlemapping.h    \
+	singlemapping.cc    \
+	framemapping.h    \
+	framemapping.cc    \
+	mappingfile.h    \
+	mappingfile.cc
+
+libmappings_la_LIBADD = \
+	$(S2SSEDIT_LIBS)
 
 libnemesis_la_SOURCES = \
 	bigendian_io.h \
