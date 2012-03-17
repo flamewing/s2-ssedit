@@ -3,7 +3,7 @@ lib_LTLIBRARIES = \
 	libenigma.la\
 	libkosinski.la \
 	libnemesis.la \
-	libmappings.la
+	libmappings.la 
 
 libmappings_la_SOURCES = \
 	singledplc.h    \
