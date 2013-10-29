@@ -1,4 +1,4 @@
-// voice_dumper.cc
+/* -*- Mode: C++; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
 //
 // Copyright (C) 2011 - Marzo Sette Torres Junior
 //
