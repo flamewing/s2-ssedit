@@ -8,7 +8,8 @@ bin_PROGRAMS = \
 	recolor_art \
 	smps2asm \
 	voice_dumper \
-	chunk_census
+	chunk_census \
+	compcmp
 
 voice_dumper_SOURCES = \
 	fmvoice.cc    \
@@ -24,6 +25,13 @@ chunk_census_SOURCES =  \
 chunk_census_CXXFLAGS = -I$(srcdir)/../lib 
 
 chunk_census_LDFLAGS = $(builddir)/../lib/libkosinski.la 
+
+compcmp_SOURCES =  \
+	compcmp.cc
+
+compcmp_CXXFLAGS = -I$(srcdir)/../lib 
+
+compcmp_LDFLAGS = $(builddir)/../lib/libcomper.la 
 
 smps2asm_SOURCES = \
 	smps2asm.cc\
