@@ -9,7 +9,8 @@ bin_PROGRAMS = \
 	smps2asm \
 	voice_dumper \
 	chunk_census \
-	compcmp
+	compcmp \
+	saxcmp
 
 voice_dumper_SOURCES = \
 	fmvoice.cc    \
@@ -32,6 +33,13 @@ compcmp_SOURCES =  \
 compcmp_CXXFLAGS = -I$(srcdir)/../lib 
 
 compcmp_LDFLAGS = $(builddir)/../lib/libcomper.la 
+
+saxcmp_SOURCES =  \
+	saxcmp.cc
+
+saxcmp_CXXFLAGS = -I$(srcdir)/../lib 
+
+saxcmp_LDFLAGS = $(builddir)/../lib/libsaxman.la 
 
 smps2asm_SOURCES = \
 	smps2asm.cc\
