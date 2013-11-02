@@ -32,14 +32,13 @@ static void usage() {
 }
 
 int main(int argc, char *argv[]) {
-	std::streamsize pointer = 0, slidewin = 8192, reclen = 256, modulesize = 0x1000;
 	if (argc < 3) {
 		usage();
 		return 1;
 	}
 
 	unsigned long chunkid = strtoul(argv[1], 0, 0);
-	for (size_t ii = 2; ii < argc; ii++) {
+	for (int ii = 2; ii < argc; ii++) {
 		std::ifstream fin(argv[ii], std::ios::in | std::ios::binary);
 		unsigned cnt = 0;
 		if (!fin.good()) {
@@ -52,7 +51,7 @@ int main(int argc, char *argv[]) {
 			bool planeA = true;
 			while (sin.good()) {
 				int c = sin.get();
-				if (c == chunkid) {
+				if (size_t(c) == chunkid) {
 					cnt++;
 					std::cout << argv[ii] << ": chunk appears on plane "
 					          << (planeA ? "A" : "B") << " @ (0x"

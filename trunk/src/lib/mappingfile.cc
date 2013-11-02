@@ -74,7 +74,7 @@ void mapping_file::write(std::ostream &out, int ver, bool nullfirst) const {
 	}
 	for (std::map<size_t, frame_mapping>::iterator it2 = posmap.begin();
 	        it2 != posmap.end(); ++it2)
-		if (it2->first == out.tellp())
+		if (it2->first == size_t(out.tellp()))
 			(it2->second).write(out, ver);
 		else if (it2->first) {
 			std::cerr << "Missed write at " << out.tellp() << std::endl;
