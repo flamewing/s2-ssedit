@@ -38,7 +38,8 @@ void BaseNote::force_linebreak(std::ostream &out, bool force) {
 	notesprinted = 0;
 }
 
-void BaseNote::write(std::ostream &out, int sonicver, size_t offset) const {
+void BaseNote::write(std::ostream &UNUSED(out), int UNUSED(sonicver),
+                     size_t UNUSED(offset)) const {
 }
 
 void Duration::print(std::ostream &out,
@@ -69,9 +70,9 @@ FMVoice::FMVoice(std::istream &in, int sonicver, int n)
 
 void FMVoice::print(std::ostream &out,
                     int sonicver,
-                    LocTraits::LocType tracktype,
-                    std::multimap<int, std::string>& labels,
-                    bool s3kmode) const {
+                    LocTraits::LocType UNUSED(tracktype),
+                    std::multimap<int, std::string>& UNUSED(labels),
+                    bool UNUSED(s3kmode)) const {
 	voc.print(out, sonicver, id);
 }
 
@@ -133,25 +134,26 @@ static void print_dac_sample(std::ostream &out, int val, int sonicver, bool flag
 		"dIntroKick", "dFinalFightMetalCrash"
 	};
 
-	if (sonicver == 5 && val - 0x80 <= sizeof(s3ddaclut) / sizeof(s3ddaclut[0]))
-		PrintName(out, s3ddaclut[val - 0x80], flag);
-	else if (sonicver == 4 && val - 0x80 <= sizeof(skdaclut) / sizeof(skdaclut[0]))
-		PrintName(out, skdaclut[val - 0x80], flag);
-	else if (sonicver == 3 && val - 0x80 <= sizeof(s3daclut) / sizeof(s3daclut[0]))
-		PrintName(out, s3daclut[val - 0x80], flag);
-	else if (sonicver == 1 && (val < 0x84 || (val >= 0x88 && val <= 0x8b)))
-		PrintName(out, s12daclut[val - 0x80], flag);
-	else if (sonicver == 2 && val - 0x80 <= sizeof(s12daclut) / sizeof(s12daclut[0]))
-		PrintName(out, s12daclut[val - 0x80], flag);
+	size_t note = val - 0x80;
+	if (sonicver == 5 && note <= sizeof(s3ddaclut) / sizeof(s3ddaclut[0]))
+		PrintName(out, s3ddaclut[note], flag);
+	else if (sonicver == 4 && note <= sizeof(skdaclut) / sizeof(skdaclut[0]))
+		PrintName(out, skdaclut[note], flag);
+	else if (sonicver == 3 && note <= sizeof(s3daclut) / sizeof(s3daclut[0]))
+		PrintName(out, s3daclut[note], flag);
+	else if (sonicver == 1 && (note < 0x4 || (note >= 0x8 && note <= 0xb)))
+		PrintName(out, s12daclut[note], flag);
+	else if (sonicver == 2 && note <= sizeof(s12daclut) / sizeof(s12daclut[0]))
+		PrintName(out, s12daclut[note], flag);
 	else
 		PrintHex2Pre(out, val, flag);
 }
 
 void DACNote::print(std::ostream &out,
                     int sonicver,
-                    LocTraits::LocType tracktype,
-                    std::multimap<int, std::string>& labels,
-                    bool s3kmode) const {
+                    LocTraits::LocType UNUSED(tracktype),
+                    std::multimap<int, std::string>& UNUSED(labels),
+                    bool UNUSED(s3kmode)) const {
 	last_note = this;
 	need_rest = false;
 
@@ -168,10 +170,10 @@ void DACNote::print(std::ostream &out,
 }
 
 void FMPSGNote::print(std::ostream &out,
-                      int sonicver,
-                      LocTraits::LocType tracktype,
-                      std::multimap<int, std::string>& labels,
-                      bool s3kmode) const {
+                      int UNUSED(sonicver),
+                      LocTraits::LocType UNUSED(tracktype),
+                      std::multimap<int, std::string>& UNUSED(labels),
+                      bool UNUSED(s3kmode)) const {
 	last_note = this;
 	need_rest = false;
 
@@ -193,10 +195,11 @@ void FMPSGNote::print(std::ostream &out,
 		"nF7" , "nFs7", "nG7" , "nAb7", "nA7" , "nBb7", "nMaxPSG", "nMaxPSG2"
 	};
 
-	if (val - 0x80 >= sizeof(fmpsglut) / sizeof(fmpsglut[0]))
+	size_t note = val - 0x80;
+	if (note >= sizeof(fmpsglut) / sizeof(fmpsglut[0]))
 		PrintHex2Pre(out, val, notesprinted == 0);
 	else
-		PrintName(out, fmpsglut[val - 0x80], notesprinted == 0);
+		PrintName(out, fmpsglut[note], notesprinted == 0);
 
 	if (++notesprinted == 12) {
 		out << std::endl;
@@ -207,9 +210,9 @@ void FMPSGNote::print(std::ostream &out,
 template<bool noret>
 void CoordFlagNoParams<noret>::print(std::ostream &out,
                                      int sonicver,
-                                     LocTraits::LocType tracktype,
-                                     std::multimap<int, std::string>& labels,
-                                     bool s3kmode) const {
+                                     LocTraits::LocType UNUSED(tracktype),
+                                     std::multimap<int, std::string>& UNUSED(labels),
+                                     bool UNUSED(s3kmode)) const {
 	// Note-like macros:
 	std::string s;
 	bool notelike = false;
@@ -322,8 +325,8 @@ template<bool noret>
 void CoordFlag1ParamByte<noret>::print(std::ostream &out,
                                        int sonicver,
                                        LocTraits::LocType tracktype,
-                                       std::multimap<int, std::string>& labels,
-                                       bool s3kmode) const {
+                                       std::multimap<int, std::string>& UNUSED(labels),
+                                       bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -474,9 +477,9 @@ void CoordFlag1ParamByte<noret>::print(std::ostream &out,
 template<bool noret>
 void CoordFlag2ParamBytes<noret>::print(std::ostream &out,
                                         int sonicver,
-                                        LocTraits::LocType tracktype,
-                                        std::multimap<int, std::string>& labels,
-                                        bool s3kmode) const {
+                                        LocTraits::LocType UNUSED(tracktype),
+                                        std::multimap<int, std::string>& UNUSED(labels),
+                                        bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -530,9 +533,9 @@ void CoordFlag2ParamBytes<noret>::print(std::ostream &out,
 template<bool noret>
 void CoordFlag3ParamBytes<noret>::print(std::ostream &out,
                                         int sonicver,
-                                        LocTraits::LocType tracktype,
-                                        std::multimap<int, std::string>& labels,
-                                        bool s3kmode) const {
+                                        LocTraits::LocType UNUSED(tracktype),
+                                        std::multimap<int, std::string>& UNUSED(labels),
+                                        bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -569,9 +572,9 @@ void CoordFlag3ParamBytes<noret>::print(std::ostream &out,
 template<bool noret>
 void CoordFlag4ParamBytes<noret>::print(std::ostream &out,
                                         int sonicver,
-                                        LocTraits::LocType tracktype,
-                                        std::multimap<int, std::string>& labels,
-                                        bool s3kmode) const {
+                                        LocTraits::LocType UNUSED(tracktype),
+                                        std::multimap<int, std::string>& UNUSED(labels),
+                                        bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -613,9 +616,9 @@ void CoordFlag4ParamBytes<noret>::print(std::ostream &out,
 template<bool noret>
 void CoordFlag5ParamBytes<noret>::print(std::ostream &out,
                                         int sonicver,
-                                        LocTraits::LocType tracktype,
-                                        std::multimap<int, std::string>& labels,
-                                        bool s3kmode) const {
+                                        LocTraits::LocType UNUSED(tracktype),
+                                        std::multimap<int, std::string>& UNUSED(labels),
+                                        bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -653,10 +656,10 @@ void CoordFlag5ParamBytes<noret>::print(std::ostream &out,
 
 template<bool noret>
 void CoordFlagPointerParam<noret>::print(std::ostream &out,
-        int sonicver,
-        LocTraits::LocType tracktype,
-        std::multimap<int, std::string>& labels,
-        bool s3kmode) const {
+                                         int UNUSED(sonicver),
+                                         LocTraits::LocType UNUSED(tracktype),
+                                         std::multimap<int, std::string>& labels,
+                                         bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -675,10 +678,10 @@ void CoordFlagPointerParam<noret>::print(std::ostream &out,
 
 template<bool noret>
 void CoordFlagPointer1ParamByte<noret>::print(std::ostream &out,
-        int sonicver,
-        LocTraits::LocType tracktype,
-        std::multimap<int, std::string>& labels,
-        bool s3kmode) const {
+                                              int sonicver,
+                                              LocTraits::LocType UNUSED(tracktype),
+                                              std::multimap<int, std::string>& labels,
+                                              bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;
@@ -708,10 +711,10 @@ void CoordFlagPointer1ParamByte<noret>::print(std::ostream &out,
 
 template<bool noret>
 void CoordFlagPointer2ParamBytes<noret>::print(std::ostream &out,
-        int sonicver,
-        LocTraits::LocType tracktype,
-        std::multimap<int, std::string>& labels,
-        bool s3kmode) const {
+                                               int sonicver,
+                                               LocTraits::LocType UNUSED(tracktype),
+                                               std::multimap<int, std::string>& labels,
+                                               bool UNUSED(s3kmode)) const {
 	if (notesprinted != 0)
 		out << std::endl;
 	notesprinted = 0;

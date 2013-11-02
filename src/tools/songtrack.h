@@ -25,6 +25,17 @@
 #include <string>
 #include "fmvoice.h"
 
+#ifdef UNUSED
+#elif defined(__GNUC__)
+#	define UNUSED(x) UNUSED_ ## x __attribute__((unused))
+#elif defined(__LCLINT__)
+#	define UNUSED(x) /*@unused@*/ x
+#elif defined(__cplusplus)
+#	define UNUSED(x)
+#else
+#	define UNUSED(x) x
+#endif
+
 extern void PrintMacro(std::ostream &out, char const *macro);
 extern void PrintHex2(std::ostream &out, unsigned char c, bool last);
 extern void PrintHex2Pre(std::ostream &out, unsigned char c, bool last);
@@ -104,8 +115,10 @@ public:
 class NullNote : public BaseNote {
 public:
 	NullNote() : BaseNote(0) {  }
-	virtual void print(std::ostream &out, int sonicver, LocTraits::LocType tracktype,
-	                   std::multimap<int, std::string>& labels, bool s3kmode) const
+	virtual void print(std::ostream &UNUSED(out), int UNUSED(sonicver),
+	                   LocTraits::LocType UNUSED(tracktype),
+	                   std::multimap<int, std::string>& UNUSED(labels),
+	                   bool UNUSED(s3kmode)) const
 	{       }
 };
 

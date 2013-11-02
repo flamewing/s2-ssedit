@@ -81,11 +81,10 @@ typedef std::pair<Position const, unsigned short> Enigma_entry;
 typedef std::map<Position, unsigned short> Enigma_map;
 
 static void plane_unmap(std::istream &src, std::ostream &dst,
-                        std::streamsize pointer, bool sonic2) {
+                        std::streamsize UNUSED(pointer), bool sonic2) {
 	std::streamsize next_loc = src.tellg();
 	std::streamsize last_loc = BigEndian::Read2(src);
 	src.seekg(0, std::ios::end);
-	std::streamsize end_loc = 0, file_len = src.tellg();
 	src.seekg(next_loc);
 
 	while (next_loc < last_loc) {
@@ -93,10 +92,8 @@ static void plane_unmap(std::istream &src, std::ostream &dst,
 
 		size_t offset = BigEndian::Read2(src);
 		next_loc = src.tellg();
-		if (next_loc == last_loc)
-			end_loc = file_len;
-		else
-			end_loc = BigEndian::Read2(src);
+		if (next_loc != last_loc)
+			src.ignore(2);
 
 		src.seekg(offset);
 

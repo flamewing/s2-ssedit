@@ -65,12 +65,12 @@ struct S1IO {
 	}
 
 	template <typename T>
-	static inline int read_pointer(T &in, int base) {
+	static inline int read_pointer(T &in, int UNUSED(base)) {
 		int ptr = int(in.tellg()) + 1;
 		return static_cast<short>(Read2(in)) + ptr;
 	}
 
-	static inline int int2headerpointer(int val, int base) {
+	static inline int int2headerpointer(int val, int UNUSED(base)) {
 		return static_cast<unsigned short>(val);
 	}
 };
@@ -145,7 +145,7 @@ BaseNote *BaseNote::read(std::istream &in, int sonicver, int offset,
                          int &last_voc) {
 	unsigned char byte = Read1(in);
 	// Initialize to invalid 32-bit address.
-	if (byte >= 0 && byte < 0x80)
+	if (byte < 0x80)
 		return new Duration(byte);
 	else if (byte < 0xe0) {
 		switch (tracktype) {
@@ -364,8 +364,9 @@ class DumpSmps {
 	int sonicver, startloc, offset, len;
 	bool sfx, s3kmode;
 public:
-	DumpSmps(std::istream &i, std::ostream &o, int s, int off, std::string const &nm, bool tf, bool s3km)
-		: in(i), out(o), sonicver(s), offset(off), projname(nm), sfx(tf), s3kmode(s3km) {
+	DumpSmps(std::istream &i, std::ostream &o, int s, int off,
+	         std::string const &nm, bool tf, bool s3km)
+		: in(i), out(o), projname(nm), sonicver(s), offset(off), sfx(tf), s3kmode(s3km) {
 		startloc = in.tellg();
 		in.seekg(0, std::ios::end);
 		len = in.tellg();
@@ -585,7 +586,7 @@ public:
 		}
 
 		// Mark all contents so far as having been explored.
-		for (size_t i = startloc; i < in.tellg(); i++)
+		for (size_t i = startloc; i < size_t(in.tellg()); i++)
 			explored.insert(std::make_pair(i, LocTraits::eHeader));
 
 		while (todo.size() > 1) {

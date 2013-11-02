@@ -361,6 +361,9 @@ int main(int argc, char *argv[]) {
 			outmaps.close();
 			break;
 		}
+		default:
+			std::cerr << "Divide By Cucumber Error. Please Reinstall Universe And Reboot." << std::endl;
+			break;
 	}
 
 	return 0;
