@@ -35,7 +35,7 @@ public:
 	void print() const;
 	void consolidate(frame_dplc const &src);
 	void insert(single_dplc const &val);
-	void build_vram_map(std::map<size_t, size_t>& vram_map) const;
+	void build_vram_map(std::map<size_t, size_t> &vram_map) const;
 	size_t size() const {
 		return dplc.size();
 	}

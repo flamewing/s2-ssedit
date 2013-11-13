@@ -141,7 +141,7 @@ static inline std::string need_loop_label() {
 template<typename IO>
 BaseNote *BaseNote::read(std::istream &in, int sonicver, int offset,
                          std::string const &projname, LocTraits::LocType tracktype,
-                         std::multimap<int, std::string>& labels,
+                         std::multimap<int, std::string> &labels,
                          int &last_voc) {
 	unsigned char byte = Read1(in);
 	// Initialize to invalid 32-bit address.
