@@ -85,7 +85,7 @@ void single_mapping::print() const {
 	std::cout << std::endl;
 }
 
-void single_mapping::split(single_mapping const &src, single_dplc &dplc, std::map<size_t, size_t>& vram_map) {
+void single_mapping::split(single_mapping const &src, single_dplc &dplc, std::map<size_t, size_t> &vram_map) {
 	xx = src.xx;
 	yy = src.yy;
 	sx = src.sx;
@@ -96,7 +96,7 @@ void single_mapping::split(single_mapping const &src, single_dplc &dplc, std::ma
 	dplc.set_tile(src.tile);
 }
 
-void single_mapping::merge(single_mapping const &src, std::map<size_t, size_t>& vram_map) {
+void single_mapping::merge(single_mapping const &src, std::map<size_t, size_t> &vram_map) {
 	xx = src.xx;
 	yy = src.yy;
 	sx = src.sx;

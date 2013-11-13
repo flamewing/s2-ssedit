@@ -112,7 +112,7 @@ void frame_dplc::insert(single_dplc const &val) {
 	dplc.push_back(val);
 }
 
-void frame_dplc::build_vram_map(std::map<size_t, size_t>& vram_map) const {
+void frame_dplc::build_vram_map(std::map<size_t, size_t> &vram_map) const {
 	for (std::vector<single_dplc>::const_iterator it = dplc.begin();
 	        it != dplc.end(); ++it) {
 		single_dplc const &sd = *it;
