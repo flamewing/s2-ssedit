@@ -29,6 +29,7 @@
 #include <set>
 #include <vector>
 
+#include "saxman.h"
 #include "getopt.h"
 #include "bigendian_io.h"
 #include "songtrack.h"
@@ -814,8 +815,7 @@ static void usage() {
 	          << "                {-v|--sonicver} {version} [-3|--s3kmode] {input_filename} {output_filename} {projname}" << std::endl;
 	std::cerr << std::endl;
 	std::cerr << "\t-s,--sfx     \tFile is SFX, not music." << std::endl;
-	std::cerr << "\t-u,--saxman  \tNot implemented yet; once it is, it will work as follows:" << std::endl
-	          << "\t             \tAssume Music file is Saxman-compressed. In most cases, this" << std::endl
+	std::cerr << "\t-u,--saxman  \tAssume music file is Saxman-compressed. In most cases, this" << std::endl
 	          << "\t             \tshould be combined with --offset 0x1380 --sonicver 2." << std::endl;
 	std::cerr << "\t-x,--extract \tExtract from {pointer} address in file. This should never be" << std::endl
 	          << "\t             \tcombined with --offset unless --saxman is also used." << std::endl;
@@ -837,12 +837,12 @@ static void usage() {
 
 int main(int argc, char *argv[]) {
 	static struct option long_options[] = {
-		{"extract", required_argument, 0, 'x'},
-		{"saxman",  no_argument      , 0, 'u'},
-		{"offset",  required_argument, 0, 'o'},
+		{"extract" , optional_argument, 0, 'x'},
+		{"saxman"  , no_argument      , 0, 'u'},
+		{"offset"  , required_argument, 0, 'o'},
 		{"sonicver", required_argument, 0, 'v'},
-		{"sfx",     no_argument      , 0, 's'},
-		{"s3kmode", no_argument      , 0, '3'},
+		{"sfx"     , no_argument      , 0, 's'},
+		{"s3kmode" , no_argument      , 0, '3'},
 		{0, 0, 0, 0}
 	};
 
@@ -851,14 +851,15 @@ int main(int argc, char *argv[]) {
 
 	while (true) {
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "x:uo:v:s3",
+		int c = getopt_long(argc, argv, "x::uo:v:s3",
 		                    long_options, &option_index);
 		if (c == -1)
 			break;
 
 		switch (c) {
 			case 'x':
-				pointer = strtoul(optarg, 0, 0);
+				if (optarg)
+					pointer = strtoul(optarg, 0, 0);
 				break;
 
 			case 'u':
@@ -915,13 +916,11 @@ int main(int argc, char *argv[]) {
 	fin.seekg(0);
 	if (!saxman) {
 		src = &fin;
-		//sin << fin.rdbuf();
 		fin.seekg(pointer);
 	} else {
-		//saxman::decode(fin, sin, 0, false);
 		src = &sin;
-		std::cerr << "Sorry, Saxman decompression not supported yet." << std::endl;
-		return 4;
+		saxman::decode(fin, sin, pointer, false);
+		sin.seekg(0);
 	}
 
 	std::ofstream fout(argv[optind + 1], std::ios::out | std::ios::binary);

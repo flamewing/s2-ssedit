@@ -36,6 +36,9 @@ public:
 	void split(frame_mapping const &src, frame_dplc &dplc);
 	void merge(frame_mapping const &src, frame_dplc const &dplc);
 	void change_pal(int srcpal, int dstpal);
+	single_mapping const &get_maps(size_t i) const {
+		return maps[i];
+	}
 	size_t size() const {
 		return maps.size();
 	}

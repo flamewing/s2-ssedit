@@ -10,7 +10,8 @@ bin_PROGRAMS = \
 	voice_dumper \
 	chunk_census \
 	compcmp \
-	saxcmp
+	saxcmp \
+	split_art
 
 voice_dumper_SOURCES = \
 	fmvoice.cc    \
@@ -41,6 +42,14 @@ saxcmp_CXXFLAGS = -I$(srcdir)/../lib
 
 saxcmp_LDFLAGS = $(builddir)/../lib/libsaxman.la 
 
+split_art_SOURCES =  \
+	split_art.cc
+
+split_art_CXXFLAGS = -I$(srcdir)/../lib 
+
+split_art_LDFLAGS = $(builddir)/../lib/libcomper.la \
+	$(builddir)/../lib/libmappings.la 
+
 smps2asm_SOURCES = \
 	smps2asm.cc\
 	fmvoice.cc\
@@ -50,6 +59,8 @@ smps2asm_SOURCES = \
 
 smps2asm_CXXFLAGS = \
 	-I$(srcdir)/../lib
+
+smps2asm_LDFLAGS = $(builddir)/../lib/libsaxman.la 
 
 recolor_art_SOURCES = \
 	recolor_art.cc
