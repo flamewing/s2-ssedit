@@ -107,10 +107,6 @@ void dplc_file::insert(frame_dplc const &val) {
 	frames.push_back(val);
 }
 
-frame_dplc const &dplc_file::get_dplc(size_t i) const {
-	return frames[i];
-}
-
 size_t dplc_file::size(int ver) const {
 	size_t sz = 2 * frames.size();
 	for (std::vector<frame_dplc>::const_iterator it = frames.begin();

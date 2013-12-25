@@ -37,6 +37,12 @@ public:
 	void merge(mapping_file const &src, dplc_file const &dplc);
 	void optimize(mapping_file const &src, dplc_file const &indplc, dplc_file &outdplc);
 	void change_pal(int srcpal, int dstpal);
+	frame_mapping const &get_maps(size_t i) const {
+		return frames[i];
+	}
+	size_t size() const {
+		return frames.size();
+	}
 	size_t size(int ver) const;
 };
 
