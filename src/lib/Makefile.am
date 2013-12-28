@@ -5,8 +5,7 @@ lib_LTLIBRARIES = \
 	libnemesis.la \
 	libmappings.la \
 	libcomper.la \
-	libsaxman.la \
-	libmegakosinski.la 
+	libsaxman.la
 
 libmappings_la_SOURCES = \
 	singledplc.h    \
@@ -42,15 +41,6 @@ libsaxman_la_SOURCES =  \
 	bitstream.h
 
 libsaxman_la_LIBADD = $(S2SSEDIT_LIBS) 
-
-libmegakosinski_la_SOURCES =  \
-	mkosinski.cc \
-	mkosinski.h \
-	lzss.h \
-	bigendian_io.h \
-	bitstream.h
-
-libmegakosinski_la_LIBADD = $(S2SSEDIT_LIBS) 
 
 libnemesis_la_SOURCES = \
 	bigendian_io.h \
