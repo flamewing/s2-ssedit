@@ -11,7 +11,6 @@ bin_PROGRAMS = \
 	chunk_census \
 	compcmp \
 	saxcmp \
-	mkoscmp \
 	split_art
 
 voice_dumper_SOURCES = \
