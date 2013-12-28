@@ -25,6 +25,7 @@
 
 #include "getopt.h"
 #include "comper.h"
+#include "kosinski.h"
 #include "dplcfile.h"
 
 struct Tile {
@@ -43,7 +44,7 @@ struct Tile {
 };
 
 static void usage(char *prog) {
-	std::cerr << "Usage: " << prog << " --sonic=VER [-c|--compress] {input_art} {input_dplc} {output_prefix}" << std::endl;
+	std::cerr << "Usage: " << prog << " --sonic=VER [-c|--comper|-m|--kosm] {input_art} {input_dplc} {output_prefix}" << std::endl;
 	std::cerr << std::endl;
 	std::cerr << "\t--sonic=VER  \tSpecifies the format of the input DPLC file." << std::endl;
 	std::cerr << "\t             \tThe following values are accepted:" << std::endl;
@@ -51,17 +52,19 @@ static void usage(char *prog) {
 	std::cerr << "\t             \tVER=2\tSonic 2 DPLC." << std::endl;
 	std::cerr << "\t             \tVER=3\tSonic 3 DPLC, as used by player objects." << std::endl;
 	std::cerr << "\t             \tVER=4\tSonic 3 DPLC, as used by non-player objects." << std::endl;
-	std::cerr << "\t-c,--compress\tOutput files are Comper-compressed." << std::endl << std::endl;
+	std::cerr << "\t-c,--comper  \tOutput files are Comper-compressed. Incompatible with --kosm." << std::endl;
+	std::cerr << "\t-m,--kosm    \tOutput files are KosM-compressed. Incompatible with --comper." << std::endl << std::endl;
 }
 
 int main(int argc, char *argv[]) {
 	static struct option long_options[] = {
-		{"compress" , no_argument      , 0, 'c'},
-		{"sonic"         , required_argument, 0, 'z'},
+		{"kosm"  , no_argument      , 0, 'm'},
+		{"comper", no_argument      , 0, 'c'},
+		{"sonic" , required_argument, 0, 'z'},
 		{0, 0, 0, 0}
 	};
 
-	bool compress = false;
+	int compress = 0;
 	int sonicver = 2;
 
 	while (true) {
@@ -73,7 +76,18 @@ int main(int argc, char *argv[]) {
 
 		switch (c) {
 			case 'c':
-				compress = true;
+				if (compress != 0) {
+					std::cerr << "Can't use --comper an --kosm together." << std::endl << std::endl;
+					return 5;
+				}
+				compress = 1;
+				break;
+			case 'm':
+				if (compress != 0) {
+					std::cerr << "Can't use --comper an --kosm together." << std::endl << std::endl;
+					return 5;
+				}
+				compress = 2;
 				break;
 			case 'z':
 				sonicver = strtoul(optarg, 0, 0);
@@ -135,8 +149,10 @@ int main(int argc, char *argv[]) {
 			std::cerr << "Output file '" << fname.str() << "' could not be opened." << std::endl << std::endl;
 			return 4;
 		}
-		if (compress) {
+		if (compress == 1) {
 			comper::encode(buffer, fout);
+		} else if (compress == 2) {
+			kosinski::encode(buffer, fout, 8192, 256, true, 0x1000);
 		} else {
 			fout << buffer.rdbuf();
 		}

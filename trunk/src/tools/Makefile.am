@@ -11,6 +11,7 @@ bin_PROGRAMS = \
 	chunk_census \
 	compcmp \
 	saxcmp \
+	mkoscmp \
 	split_art
 
 voice_dumper_SOURCES = \
@@ -47,8 +48,11 @@ split_art_SOURCES =  \
 
 split_art_CXXFLAGS = -I$(srcdir)/../lib 
 
+.split_art_CXXFLAGS = -I$(srcdir)/../lib 
+
 split_art_LDFLAGS = $(builddir)/../lib/libcomper.la \
-	$(builddir)/../lib/libmappings.la 
+	$(builddir)/../lib/libkosinski.la \
+	$(builddir)/../lib/libmappings.la
 
 smps2asm_SOURCES = \
 	smps2asm.cc\
