@@ -19,12 +19,10 @@
 #ifndef _FRAMEMAPPING_H_
 #define _FRAMEMAPPING_H_
 
+#include <iosfwd>
 #include <vector>
 #include "singlemapping.h"
 #include "framedplc.h"
-
-class istream;
-class ostream;
 
 class frame_mapping {
 protected:

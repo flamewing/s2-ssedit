@@ -19,12 +19,10 @@
 #ifndef _MAPPINGFILE_H_
 #define _MAPPINGFILE_H_
 
+#include <iosfwd>
 #include <vector>
 #include "framemapping.h"
 #include "dplcfile.h"
-
-class istream;
-class ostream;
 
 class mapping_file {
 protected:

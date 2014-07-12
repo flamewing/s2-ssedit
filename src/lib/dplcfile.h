@@ -19,11 +19,9 @@
 #ifndef _DPLCFILE_H_
 #define _DPLCFILE_H_
 
+#include <iosfwd>
 #include <vector>
 #include "framedplc.h"
-
-class istream;
-class ostream;
 
 class dplc_file {
 protected:

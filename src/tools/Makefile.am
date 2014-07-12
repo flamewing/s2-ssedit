@@ -47,8 +47,6 @@ split_art_SOURCES =  \
 
 split_art_CXXFLAGS = -I$(srcdir)/../lib 
 
-.split_art_CXXFLAGS = -I$(srcdir)/../lib 
-
 split_art_LDFLAGS = $(builddir)/../lib/libcomper.la \
 	$(builddir)/../lib/libkosinski.la \
 	$(builddir)/../lib/libmappings.la

@@ -19,11 +19,9 @@
 #ifndef _SINGLEMAPPING_H_
 #define _SINGLEMAPPING_H_
 
+#include <iosfwd>
 #include <map>
 #include "singledplc.h"
-
-class istream;
-class ostream;
 
 class single_mapping {
 protected:

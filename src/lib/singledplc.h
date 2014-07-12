@@ -19,8 +19,7 @@
 #ifndef _SINGLEDPLC_H_
 #define _SINGLEDPLC_H_
 
-class istream;
-class ostream;
+#include <iosfwd>
 
 #ifdef UNUSED
 #elif defined(__GNUC__)
