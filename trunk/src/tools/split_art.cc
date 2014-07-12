@@ -28,15 +28,17 @@
 #include "kosinski.h"
 #include "dplcfile.h"
 
+using namespace std;
+
 struct Tile {
 	unsigned char tiledata[32];
-	bool read(std::istream &in) {
+	bool read(istream &in) {
 		for (size_t i = 0; i < sizeof(tiledata); i++) {
 			tiledata[i] = in.get();
 		}
 		return true;
 	}
-	void write(std::ostream &out) {
+	void write(ostream &out) {
 		for (size_t i = 0; i < sizeof(tiledata); i++) {
 			out.put(tiledata[i]);
 		}
@@ -44,20 +46,20 @@ struct Tile {
 };
 
 static void usage(char *prog) {
-	std::cerr << "Usage: " << prog << " --sonic=VER [-c|--comper|-m|--kosm] {input_art} {input_dplc} {output_prefix}" << std::endl;
-	std::cerr << std::endl;
-	std::cerr << "\t--sonic=VER  \tSpecifies the format of the input DPLC file." << std::endl;
-	std::cerr << "\t             \tThe following values are accepted:" << std::endl;
-	std::cerr << "\t             \tVER=1\tSonic 1 DPLC." << std::endl;
-	std::cerr << "\t             \tVER=2\tSonic 2 DPLC." << std::endl;
-	std::cerr << "\t             \tVER=3\tSonic 3 DPLC, as used by player objects." << std::endl;
-	std::cerr << "\t             \tVER=4\tSonic 3 DPLC, as used by non-player objects." << std::endl;
-	std::cerr << "\t-c,--comper  \tOutput files are Comper-compressed. Incompatible with --kosm." << std::endl;
-	std::cerr << "\t-m,--kosm    \tOutput files are KosM-compressed. Incompatible with --comper." << std::endl << std::endl;
+	cerr << "Usage: " << prog << " --sonic=VER [-c|--comper|-m|--kosm] {input_art} {input_dplc} {output_prefix}" << endl;
+	cerr << endl;
+	cerr << "\t--sonic=VER  \tSpecifies the format of the input DPLC file." << endl;
+	cerr << "\t             \tThe following values are accepted:" << endl;
+	cerr << "\t             \tVER=1\tSonic 1 DPLC." << endl;
+	cerr << "\t             \tVER=2\tSonic 2 DPLC." << endl;
+	cerr << "\t             \tVER=3\tSonic 3 DPLC, as used by player objects." << endl;
+	cerr << "\t             \tVER=4\tSonic 3 DPLC, as used by non-player objects." << endl;
+	cerr << "\t-c,--comper  \tOutput files are Comper-compressed. Incompatible with --kosm." << endl;
+	cerr << "\t-m,--kosm    \tOutput files are KosM-compressed. Incompatible with --comper." << endl << endl;
 }
 
 int main(int argc, char *argv[]) {
-	static struct option long_options[] = {
+	static option long_options[] = {
 		{"kosm"  , no_argument      , 0, 'm'},
 		{"comper", no_argument      , 0, 'c'},
 		{"sonic" , required_argument, 0, 'z'},
@@ -77,14 +79,14 @@ int main(int argc, char *argv[]) {
 		switch (c) {
 			case 'c':
 				if (compress != 0) {
-					std::cerr << "Can't use --comper an --kosm together." << std::endl << std::endl;
+					cerr << "Can't use --comper an --kosm together." << endl << endl;
 					return 5;
 				}
 				compress = 1;
 				break;
 			case 'm':
 				if (compress != 0) {
-					std::cerr << "Can't use --comper an --kosm together." << std::endl << std::endl;
+					cerr << "Can't use --comper an --kosm together." << endl << endl;
 					return 5;
 				}
 				compress = 2;
@@ -102,24 +104,24 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	std::ifstream inart(argv[optind + 0], std::ios::in | std::ios::binary),
-	    indplc(argv[optind + 1], std::ios::in | std::ios::binary);
+	ifstream inart(argv[optind + 0], ios::in | ios::binary),
+	         indplc(argv[optind + 1], ios::in | ios::binary);
 
 	if (!inart.good()) {
-		std::cerr << "Input art file '" << argv[optind + 0] << "' could not be opened." << std::endl << std::endl;
+		cerr << "Input art file '" << argv[optind + 0] << "' could not be opened." << endl << endl;
 		return 2;
 	}
 
 	if (!indplc.good()) {
-		std::cerr << "Input DPLC file '" << argv[optind + 1] << "' could not be opened." << std::endl << std::endl;
+		cerr << "Input DPLC file '" << argv[optind + 1] << "' could not be opened." << endl << endl;
 		return 3;
 	}
 
-	inart.seekg(0, std::ios::end);
+	inart.seekg(0, ios::end);
 	size_t size = inart.tellg();
 	inart.seekg(0);
 
-	std::vector<Tile> tiles;
+	vector<Tile> tiles;
 	tiles.resize(size / 32);
 
 	for (size_t ii = 0; ii < tiles.size(); ii++) {
@@ -132,7 +134,7 @@ int main(int argc, char *argv[]) {
 	indplc.close();
 	
 	for (size_t ii = 0; ii < srcdplc.size(); ii++) {
-		std::stringstream buffer(std::ios::in | std::ios::out | std::ios::binary);
+		stringstream buffer(ios::in | ios::out | ios::binary);
 		frame_dplc const &frame = srcdplc.get_dplc(ii);
 		for (size_t jj = 0; jj < frame.size(); jj++) {
 			single_dplc const &dplc = frame.get_dplc(jj);
@@ -140,13 +142,12 @@ int main(int argc, char *argv[]) {
 				tiles[dplc.get_tile() + kk].write(buffer);
 			}
 		}
-		std::stringstream fname(std::ios::in | std::ios::out);
-		fname << argv[optind + 2] << std::hex << std::setw(2)
-		      << std::setfill('0') << ii << ".bin";
-		std::ofstream fout(fname.str().c_str(),
-		                   std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+		stringstream fname(ios::in | ios::out);
+		fname << argv[optind + 2] << hex << setw(2)
+		      << setfill('0') << ii << ".bin";
+		ofstream fout(fname.str().c_str(), ios::in|ios::out|ios::binary|ios::trunc);
 		if (!fout.good()) {
-			std::cerr << "Output file '" << fname.str() << "' could not be opened." << std::endl << std::endl;
+			cerr << "Output file '" << fname.str() << "' could not be opened." << endl << endl;
 			return 4;
 		}
 		if (compress == 1) {

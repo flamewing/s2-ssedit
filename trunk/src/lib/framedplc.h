@@ -19,12 +19,10 @@
 #ifndef _FRAMEDPLC_H_
 #define _FRAMEDPLC_H_
 
+#include <iosfwd>
 #include <map>
 #include <vector>
 #include "singledplc.h"
-
-class istream;
-class ostream;
 
 class frame_dplc {
 protected:

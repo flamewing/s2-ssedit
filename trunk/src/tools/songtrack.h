@@ -36,12 +36,6 @@
 #	define UNUSED(x) x
 #endif
 
-extern void PrintMacro(std::ostream &out, char const *macro);
-extern void PrintHex2(std::ostream &out, unsigned char c, bool last);
-extern void PrintHex2Pre(std::ostream &out, unsigned char c, bool last);
-extern void PrintHex4(std::ostream &out, unsigned short c, bool last);
-extern void PrintName(std::ostream &out, std::string s, bool last);
-
 struct LocTraits {
 	int loc;
 	enum LocType {
