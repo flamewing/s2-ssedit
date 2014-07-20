@@ -29,8 +29,9 @@
 #include <set>
 #include <vector>
 
+#include <getopt.h>
+
 #include "saxman.h"
-#include "getopt.h"
 #include "bigendian_io.h"
 #include "songtrack.h"
 #include "fmvoice.h"
@@ -806,10 +807,15 @@ public:
 };
 
 static void usage() {
-	cerr << "Usage: smps2asm [-x|--extract [{pointer}]] [-u|--saxman] [-o|--offset {offsetval}] [-s|--sfx]" << endl
+	cerr << "Usage: smps2asm [-b|--bank {ptrtable} [-x|--extract [{pointer}]] [-u|--saxman] [-o|--offset {offsetval}] [-s|--sfx]" << endl
 	     << "                {-v|--sonicver} {version} [-3|--s3kmode] {input_filename} {output_filename} {projname}" << endl;
 	cerr << endl;
 	cerr << "\t-s,--sfx     \tFile is SFX, not music." << endl;
+	cerr << "\t-b,--bank    \tExtracts an entire z80 bank whose pointer table is at ptrtable." << endl
+	     << "\t             \tThe pointer table must reside in the bank, and this option cannot" << endl
+	     << "\t             \tbe combined with --extract or with --saxman." << endl
+	     << "\t             \tSince this is for extracting z80 banks, it is not compatible with" << endl
+	     << "\t             \t--sonicver 1. If missing, ptrtable is assumed to be zero." << endl;
 	cerr << "\t-u,--saxman  \tAssume music file is Saxman-compressed. In most cases, this" << endl
 	     << "\t             \tshould be combined with --offset 0x1380 --sonicver 2." << endl;
 	cerr << "\t-x,--extract \tExtract from {pointer} address in file. This should never be" << endl
@@ -830,8 +836,50 @@ static void usage() {
 	     << "\t             \tUse with care." << endl << endl;
 }
 
+void dump_single_entry
+(
+ istream &in, ostream &out, string const &projname,
+ int pointer, int offset, int sonicver, bool saxman, bool sfx, bool s3kmode
+) {
+
+	if (pointer) {
+		if (saxman)
+			offset = -offset;
+		else {
+			offset = pointer;
+			if (sonicver != 1)
+				offset &= ~0x7fff;
+		}
+	} else if (sonicver != 1)
+		offset = -offset;
+	else
+		offset = 0;
+
+	istream *src;
+	stringstream sin(ios::in | ios::out | ios::binary);
+
+	in.seekg(0);
+	if (!saxman) {
+		src = &in;
+		in.seekg(pointer);
+	} else {
+		src = &sin;
+		saxman::decode(in, sin, pointer, false);
+		sin.seekg(0);
+	}
+
+	if (sonicver == 1) {
+		DumpSmps<S1IO> smps(*src, out, sonicver, offset, projname, sfx, s3kmode);
+		smps.dump_smps();
+	} else {
+		DumpSmps<SNIO> smps(*src, out, sonicver, offset, projname, sfx, s3kmode);
+		smps.dump_smps();
+	}
+}
+
 int main(int argc, char *argv[]) {
 	static option long_options[] = {
+		{"bank"    , optional_argument, 0, 'b'},
 		{"extract" , optional_argument, 0, 'x'},
 		{"saxman"  , no_argument      , 0, 'u'},
 		{"offset"  , required_argument, 0, 'o'},
@@ -841,17 +889,23 @@ int main(int argc, char *argv[]) {
 		{0, 0, 0, 0}
 	};
 
-	bool sfx = false, saxman = false, s3kmode = false;
-	int pointer = 0, offset = 0, sonicver = -1;
+	bool sfx = false, saxman = false, s3kmode = false, bankmode = false;
+	int pointer = 0, offset = 0, ptrtable = 0, sonicver = -1;
 
 	while (true) {
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "x::uo:v:s3",
+		int c = getopt_long(argc, argv, "b::x::uo:v:s3",
 		                    long_options, &option_index);
 		if (c == -1)
 			break;
 
 		switch (c) {
+			case 'b':
+				if (optarg)
+					ptrtable = strtoul(optarg, 0, 0);
+				bankmode = true;
+				break;
+
 			case 'x':
 				if (optarg)
 					pointer = strtoul(optarg, 0, 0);
@@ -881,41 +935,17 @@ int main(int argc, char *argv[]) {
 
 	if (argc - optind < 3 || sonicver < 1 || sonicver > 5
 	        || (!saxman && pointer != 0 && offset != 0)
+	        || (bankmode && (pointer != 0 || saxman || sonicver == 1))
 	        || (s3kmode && sonicver > 2)) {
 		usage();
 		return 1;
 	}
 
-	if (pointer) {
-		if (saxman)
-			offset = -offset;
-		else {
-			offset = pointer;
-			if (sonicver != 1)
-				offset &= ~0x7fff;
-		}
-	} else if (sonicver != 1)
-		offset = -offset;
-	else
-		offset = 0;
 
 	ifstream fin(argv[optind + 0], ios::in | ios::binary);
 	if (!fin.good()) {
 		cerr << "Input file '" << argv[optind + 0] << "' could not be opened." << endl << endl;
 		return 2;
-	}
-
-	istream *src;
-	stringstream sin(ios::in | ios::out | ios::binary);
-
-	fin.seekg(0);
-	if (!saxman) {
-		src = &fin;
-		fin.seekg(pointer);
-	} else {
-		src = &sin;
-		saxman::decode(fin, sin, pointer, false);
-		sin.seekg(0);
 	}
 
 	ofstream fout(argv[optind + 1], ios::out | ios::binary);
@@ -925,11 +955,41 @@ int main(int argc, char *argv[]) {
 	}
 
 	string projname(argv[optind + 2]);
-	if (sonicver == 1) {
-		DumpSmps<S1IO> smps(*src, fout, sonicver, offset, projname, sfx, s3kmode);
-		smps.dump_smps();
+
+	if (bankmode) {
+		fin.seekg(ptrtable);
+		vector<int> ptrtable;
+		int leastptr = 0xFFFF;
+		ptrtable.reserve(128);
+
+		while (fin.good() && fin.tellg() < (leastptr & 0x7FFF)) {
+			int ptr = LittleEndian::Read2(fin);
+			if (ptr < 0x8000) {
+				break;
+			} else if (ptr < leastptr) {
+				leastptr = ptr;
+			}
+			ptrtable.push_back(ptr);
+		}
+
+		char const *fmt;
+		if (ptrtable.size() < 256) {
+			fmt = "%02X";
+		} else {
+			fmt = "%04X";
+		}
+		char buf[10];
+
+		for (unsigned ii = 0; ii < ptrtable.size(); ii++) {
+			snprintf(buf, sizeof(buf), fmt, ii);
+			dump_single_entry(fin, fout, projname + buf, ptrtable[ii] & 0x7FFF,
+			                  0, sonicver, saxman, sfx, s3kmode);
+			if (ii + 1 < ptrtable.size()) {
+				fout << endl;
+			}
+		}
 	} else {
-		DumpSmps<SNIO> smps(*src, fout, sonicver, offset, projname, sfx, s3kmode);
-		smps.dump_smps();
+		dump_single_entry(fin, fout, projname, pointer, offset, sonicver,
+		                  saxman, sfx, s3kmode);
 	}
 }

@@ -22,7 +22,8 @@
 #include <cstring>
 #include <cstdlib>
 
-#include "getopt.h"
+#include <getopt.h>
+
 #include "kosinski.h"
 #include "nemesis.h"
 

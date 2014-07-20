@@ -23,7 +23,8 @@
 #include <cstdlib>
 #include <vector>
 
-#include "getopt.h"
+#include <getopt.h>
+
 #include "comper.h"
 #include "kosinski.h"
 #include "dplcfile.h"
