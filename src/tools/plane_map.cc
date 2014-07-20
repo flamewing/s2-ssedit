@@ -22,7 +22,8 @@
 #include <cstdlib>
 #include <map>
 
-#include "getopt.h"
+#include <getopt.h>
+
 #include "bigendian_io.h"
 #include "enigma.h"
 
