@@ -112,21 +112,21 @@ enum FileErrors {
 
 int main(int argc, char *argv[]) {
 	static option long_options[] = {
-		{"optimize"      , no_argument      , 0, 'o'},
-		{"split"         , no_argument      , 0, 's'},
-		{"merge"         , no_argument      , 0, 'm'},
-		{"fix"           , no_argument      , 0, 'f'},
-		{"crush-mappings", no_argument      , 0, 'c'},
-		{"crush-dplc"    , no_argument      , 0, 'k'},
-		{"info"          , no_argument      , 0, 'i'},
-		{"dplc"          , no_argument      , 0, 'd'},
-		{"no-null"       , no_argument      , 0, '0'},
-		{"pal-change"    , required_argument, 0, 'p'},
-		{"pal-dest"      , required_argument, 0, 'a'},
-		{"from-sonic"    , required_argument, 0, 'x'},
-		{"to-sonic"      , required_argument, 0, 'y'},
-		{"sonic"         , required_argument, 0, 'z'},
-		{0, 0, 0, 0}
+		{"optimize"      , no_argument      , nullptr, 'o'},
+		{"split"         , no_argument      , nullptr, 's'},
+		{"merge"         , no_argument      , nullptr, 'm'},
+		{"fix"           , no_argument      , nullptr, 'f'},
+		{"crush-mappings", no_argument      , nullptr, 'c'},
+		{"crush-dplc"    , no_argument      , nullptr, 'k'},
+		{"info"          , no_argument      , nullptr, 'i'},
+		{"dplc"          , no_argument      , nullptr, 'd'},
+		{"no-null"       , no_argument      , nullptr, '0'},
+		{"pal-change"    , required_argument, nullptr, 'p'},
+		{"pal-dest"      , required_argument, nullptr, 'a'},
+		{"from-sonic"    , required_argument, nullptr, 'x'},
+		{"to-sonic"      , required_argument, nullptr, 'y'},
+		{"sonic"         , required_argument, nullptr, 'z'},
+		{nullptr, 0, nullptr, 0}
 	};
 
 	Actions act = eNone;
@@ -147,19 +147,19 @@ int main(int argc, char *argv[]) {
 				nullfirst = false;
 				break;
 			case 'x':
-				fromsonicver = strtoul(optarg, 0, 0);
+				fromsonicver = strtoul(optarg, nullptr, 0);
 				if (fromsonicver < 1 || fromsonicver > 4) {
 					fromsonicver = 2;
 				}
 				break;
 			case 'y':
-				tosonicver = strtoul(optarg, 0, 0);
+				tosonicver = strtoul(optarg, nullptr, 0);
 				if (tosonicver < 1 || tosonicver > 4) {
 					tosonicver = 2;
 				}
 				break;
 			case 'z':
-				fromsonicver = tosonicver = strtoul(optarg, 0, 0);
+				fromsonicver = tosonicver = strtoul(optarg, nullptr, 0);
 				if (fromsonicver < 1 || fromsonicver > 4) {
 					fromsonicver = tosonicver = 2;
 				}
@@ -172,14 +172,14 @@ int main(int argc, char *argv[]) {
 				ARG_CASE('k', eConvertDPLC, 2,)
 				ARG_CASE('i', eInfo, 1,)
 				ARG_CASE('d', eDplc, 1,)
-				ARG_CASE('p', ePalChange, 2, srcpal = (strtoul(optarg, 0, 0) & 3) << 5)
+				ARG_CASE('p', ePalChange, 2, srcpal = (strtoul(optarg, nullptr, 0) & 3) << 5)
 			case 'a':
 				if (act != ePalChange) {
 					usage();
 					return eInvalidArgs;
 				}
 				nargs = 2;
-				dstpal = (strtoul(optarg, 0, 0) & 3) << 5;
+				dstpal = (strtoul(optarg, nullptr, 0) & 3) << 5;
 				break;
 		}
 	}

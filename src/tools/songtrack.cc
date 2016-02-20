@@ -29,7 +29,7 @@
 using namespace std;
 
 size_t BaseNote::notesprinted = 0;
-BaseNote const *BaseNote::last_note = 0;
+BaseNote const *BaseNote::last_note = nullptr;
 bool BaseNote::need_rest = false;
 
 void BaseNote::force_linebreak(ostream &out, bool force) {
@@ -395,13 +395,13 @@ void CoordFlag1ParamByte<noret>::print(ostream &out,
 	if (sonicver >= 3) {
 		switch (val) {
 			case 0xe0:
-				s = "smpsPan"  ;
+				s = "smpsPan";
 				break;
 			case 0xe1:
 				s = "smpsDetune";
 				break;
 			case 0xe2:
-				s = "smpsFade" ;
+				s = "smpsFade";
 				break;   // For $E2, XX with XX != $FF
 			case 0xe4:
 				s = "smpsSetVol";
@@ -454,13 +454,13 @@ void CoordFlag1ParamByte<noret>::print(ostream &out,
 	} else {
 		switch (val) {
 			case 0xe0:
-				s = "smpsPan" ;
+				s = "smpsPan";
 				break;
 			case 0xe1:
 				s = "smpsDetune";
 				break;
 			case 0xe2:
-				s = "smpsNop" ;
+				s = "smpsNop";
 				break;
 			case 0xe5:
 				s = "smpsChanTempoDiv";
@@ -492,7 +492,7 @@ void CoordFlag1ParamByte<noret>::print(ostream &out,
 			case 0xf5:
 				s = "smpsPSGvoice";
 				break;
-				//case 0xed:  s = ""        ; break;  // Sonic 2 version
+			//case 0xed:  s = ""; break;  // Sonic 2 version
 		}
 	}
 
@@ -721,7 +721,7 @@ void CoordFlag5ParamBytes<noret>::print(ostream &out,
 				metacf = true;
 				switch (param1) {
 					case 0x05:
-						s = "smpsSSGEG"   ;
+						s = "smpsSSGEG";
 						break;
 				}
 				break;
@@ -761,13 +761,13 @@ void CoordFlagPointerParam<noret>::print(ostream &out,
 	if (val == 0xf6) {
 		PrintMacro(out, "smpsJump");
 	} else if (val == 0xf8) {
-		last_note = 0;
+		last_note = nullptr;
 		PrintMacro(out, "smpsCall");
 	} else if (val == 0xfc) { // Sonic 3 only
 		PrintMacro(out, "smpsContinuousLoop");
 	}
 
-	multimap<int, string>::iterator it = labels.find(jumptarget);
+	auto it = labels.find(jumptarget);
 	out << it->second << endl;
 }
 
@@ -804,7 +804,7 @@ void CoordFlagPointer1ParamByte<noret>::print(ostream &out,
 		PrintHex2(out, param1, false);
 	}
 
-	multimap<int, string>::iterator it = labels.find(jumptarget);
+	auto it = labels.find(jumptarget);
 	out << it->second << endl;
 }
 
@@ -825,7 +825,7 @@ void CoordFlagPointer2ParamBytes<noret>::print(ostream &out,
 	if (sonicver >= 3) {
 		switch (val) {
 			case 0xf7:
-				s = "smpsLoop"  ;
+				s = "smpsLoop";
 				break;
 			case 0xff:
 				metacf = true;
@@ -839,7 +839,7 @@ void CoordFlagPointer2ParamBytes<noret>::print(ostream &out,
 	} else {
 		switch (val) {
 			case 0xf7:
-				s = "smpsLoop"  ;
+				s = "smpsLoop";
 				break;
 		}
 	}
@@ -855,8 +855,8 @@ void CoordFlagPointer2ParamBytes<noret>::print(ostream &out,
 		PrintHex2(out, param1, false);
 		PrintHex2(out, param2, false);
 	}
-	multimap<int, string>::iterator it = labels.find(jumptarget);
 
+	auto it = labels.find(jumptarget);
 	if (it != labels.end()) {
 		out << it->second;
 	} else {

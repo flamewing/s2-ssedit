@@ -49,18 +49,16 @@ void frame_dplc::write(ostream &out, int ver) const {
 	} else {
 		BigEndian::Write2(out, dplc.size());
 	}
-	for (vector<single_dplc>::const_iterator it = dplc.begin();
-	        it != dplc.end(); ++it) {
-		it->write(out, ver);
+	for (const auto & elem : dplc) {
+		elem.write(out, ver);
 	}
 }
 
 void frame_dplc::print() const {
 	size_t ntiles = 0;
-	for (vector<single_dplc>::const_iterator it = dplc.begin();
-	        it != dplc.end(); ++it) {
-		ntiles += it->get_cnt();
-		it->print();
+	for (const auto & elem : dplc) {
+		ntiles += elem.get_cnt();
+		elem.print();
 	}
 	cout << nouppercase << "\tTile count: $";
 	cout << uppercase   << hex << setfill('0') << setw(4) << ntiles;
@@ -74,9 +72,7 @@ void frame_dplc::consolidate(frame_dplc const &src) {
 
 	size_t start = src.dplc[0].get_tile(), size = 0;
 	frame_dplc interm;
-	for (vector<single_dplc>::const_iterator it = src.dplc.begin();
-	        it != src.dplc.end(); ++it) {
-		single_dplc const &sd = *it;
+	for (const auto & sd : src.dplc) {
 		if (sd.get_tile() != start + size) {
 			single_dplc nn;
 			nn.set_tile(start);
@@ -122,9 +118,7 @@ void frame_dplc::insert(single_dplc const &val) {
 }
 
 void frame_dplc::build_vram_map(map<size_t, size_t> &vram_map) const {
-	for (vector<single_dplc>::const_iterator it = dplc.begin();
-	        it != dplc.end(); ++it) {
-		single_dplc const &sd = *it;
+	for (const auto & sd : dplc) {
 		size_t ss = sd.get_tile(), sz = sd.get_cnt();
 		for (size_t i = ss; i < ss + sz; i++) {
 			vram_map.insert(pair<size_t, size_t>(vram_map.size(), i));

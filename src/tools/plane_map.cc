@@ -117,8 +117,8 @@ static void plane_unmap(istream &src, ostream &dst,
 			engfile.insert(Enigma_entry(pos, v));
 		}
 
-		for (Enigma_map::iterator it = engfile.begin(); it != engfile.end(); ++it) {
-			unsigned short v = it->second;
+		for (auto & elem : engfile) {
+			unsigned short v = elem.second;
 			BigEndian::Write2(dst, v);
 		}
 	}
@@ -127,10 +127,10 @@ static void plane_unmap(istream &src, ostream &dst,
 int main(int argc, char *argv[]) {
 	int sonic2 = 0;
 	static option long_options[] = {
-		{"extract"  , optional_argument, 0, 'x'},
+		{"extract"  , optional_argument, nullptr, 'x'},
 		{"sonic2"   , no_argument      , &sonic2, 1},
-		{"compress" , no_argument      , 0, 'c'},
-		{0, 0, 0, 0}
+		{"compress" , no_argument      , nullptr, 'c'},
+		{nullptr, 0, nullptr, 0}
 	};
 
 	bool extract = false, compress = false, unmap = false;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
 			case 'x':
 				extract = true;
 				if (optarg) {
-					pointer = strtoul(optarg, 0, 0);
+					pointer = strtoul(optarg, nullptr, 0);
 				}
 				break;
 
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 		}
 	} else {
 		stringstream fbuf(ios::in | ios::out | ios::binary | ios::trunc);
-		size_t w = strtoul(argv[optind + 2], 0, 0), h = strtoul(argv[optind + 3], 0, 0);
+		size_t w = strtoul(argv[optind + 2], nullptr, 0), h = strtoul(argv[optind + 3], nullptr, 0);
 		if (!w || !h) {
 			cerr << "Invalid height or width for plane mapping." << endl << endl;
 			return 4;

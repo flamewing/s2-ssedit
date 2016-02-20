@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	unsigned long chunkid = strtoul(argv[1], 0, 0);
+	unsigned long chunkid = strtoul(argv[1], nullptr, 0);
 	for (int ii = 2; ii < argc; ii++) {
 		ifstream fin(argv[ii], ios::in | ios::binary);
 		unsigned cnt = 0;

@@ -198,7 +198,7 @@ BaseNote *BaseNote::read(istream &in, int sonicver, int offset,
 			case 0xf7: { // Loop
 				unsigned char index = Read1(in), repeats = Read1(in);
 				int ptr = IO::read_pointer(in, offset);
-				multimap<int, string>::iterator it = labels.find(ptr);
+				auto it = labels.find(ptr);
 				if (it == labels.end()) {
 					labels.insert(make_pair(ptr, projname + need_loop_label()));
 				}
@@ -214,7 +214,7 @@ BaseNote *BaseNote::read(istream &in, int sonicver, int offset,
 			case 0xf8:  // Call
 			case 0xfc: { // Continuous loop
 				int ptr = IO::read_pointer(in, offset);
-				multimap<int, string>::iterator it = labels.find(ptr);
+				auto it = labels.find(ptr);
 				if (it == labels.end()) {
 					string lbl;
 					if (byte == 0xf6) {
@@ -235,7 +235,7 @@ BaseNote *BaseNote::read(istream &in, int sonicver, int offset,
 			case 0xeb: { // Conditional jump
 				unsigned char index = Read1(in);
 				int ptr = IO::read_pointer(in, offset);
-				multimap<int, string>::iterator it = labels.find(ptr);
+				auto it = labels.find(ptr);
 				if (it == labels.end()) {
 					labels.insert(make_pair(ptr, projname + need_jump_label()));
 				}
@@ -303,7 +303,7 @@ BaseNote *BaseNote::read(istream &in, int sonicver, int offset,
 			case 0xf7: { // Loop
 				unsigned char index = Read1(in), repeats = Read1(in);
 				int ptr = IO::read_pointer(in, offset);
-				multimap<int, string>::iterator it = labels.find(ptr);
+				auto it = labels.find(ptr);
 				if (it == labels.end()) {
 					labels.insert(make_pair(ptr, projname + need_loop_label()));
 				}
@@ -317,7 +317,7 @@ BaseNote *BaseNote::read(istream &in, int sonicver, int offset,
 			case 0xf6:  // Jump
 			case 0xf8: { // Call
 				int ptr = IO::read_pointer(in, offset);
-				multimap<int, string>::iterator it = labels.find(ptr);
+				auto it = labels.find(ptr);
 				if (it == labels.end()) {
 					labels.insert(make_pair(ptr, projname + (byte == 0xf6 ? need_jump_label()
 					                        : need_call_label())));
@@ -649,7 +649,7 @@ public:
 			}
 
 			if (next_loc.loc < 0 || next_loc.loc >= len) {
-				multimap<int, string>::iterator it = labels.lower_bound(next_loc.loc),
+				auto it = labels.lower_bound(next_loc.loc),
 				                                end = labels.upper_bound(next_loc.loc);
 
 				if (it != end) {
@@ -757,12 +757,11 @@ public:
 		}
 
 		int lastlabel = -1;
-		for (map<int, shared_ptr<BaseNote> >::iterator it = trackdata.begin();
-		        it != trackdata.end(); ++it) {
-			int off = it->first;
-			shared_ptr<BaseNote> note = it->second;
+		for (auto & elem : trackdata) {
+			int off = elem.first;
+			shared_ptr<BaseNote> note = elem.second;
 			if (off > lastlabel) {
-				multimap<int, string>::iterator it = labels.upper_bound(lastlabel),
+				auto it = labels.upper_bound(lastlabel),
 				                                end = labels.upper_bound(off);
 
 				if (it != end) {
@@ -780,7 +779,7 @@ public:
 				lastlabel = off;
 			}
 
-			map<int, LocTraits::LocType>::iterator ty = explored.find(off);
+			auto ty = explored.find(off);
 			//assert(ty != explored.end());
 			if (ty != explored.end()) {
 				note->print(out, sonicver, ty->second, labels, s3kmode);
@@ -922,14 +921,14 @@ void dump_single_entry
 
 int main(int argc, char *argv[]) {
 	static option long_options[] = {
-		{"bank"    , optional_argument, 0, 'b'},
-		{"extract" , optional_argument, 0, 'x'},
-		{"saxman"  , no_argument      , 0, 'u'},
-		{"offset"  , required_argument, 0, 'o'},
-		{"sonicver", required_argument, 0, 'v'},
-		{"sfx"     , no_argument      , 0, 's'},
-		{"s3kmode" , no_argument      , 0, '3'},
-		{0, 0, 0, 0}
+		{"bank"    , optional_argument, nullptr, 'b'},
+		{"extract" , optional_argument, nullptr, 'x'},
+		{"saxman"  , no_argument      , nullptr, 'u'},
+		{"offset"  , required_argument, nullptr, 'o'},
+		{"sonicver", required_argument, nullptr, 'v'},
+		{"sfx"     , no_argument      , nullptr, 's'},
+		{"s3kmode" , no_argument      , nullptr, '3'},
+		{nullptr, 0, nullptr, 0}
 	};
 
 	bool sfx = false, saxman = false, s3kmode = false, bankmode = false;
@@ -946,14 +945,14 @@ int main(int argc, char *argv[]) {
 		switch (c) {
 			case 'b':
 				if (optarg) {
-					ptrtable = strtoul(optarg, 0, 0);
+					ptrtable = strtoul(optarg, nullptr, 0);
 				}
 				bankmode = true;
 				break;
 
 			case 'x':
 				if (optarg) {
-					pointer = strtoul(optarg, 0, 0);
+					pointer = strtoul(optarg, nullptr, 0);
 				}
 				break;
 
@@ -962,7 +961,7 @@ int main(int argc, char *argv[]) {
 				break;
 
 			case 'o':
-				offset = strtoul(optarg, 0, 0);
+				offset = strtoul(optarg, nullptr, 0);
 				break;
 
 			case 's':
@@ -970,7 +969,7 @@ int main(int argc, char *argv[]) {
 				break;
 
 			case 'v':
-				sonicver = strtoul(optarg, 0, 0);
+				sonicver = strtoul(optarg, nullptr, 0);
 				break;
 
 			case '3':

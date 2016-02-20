@@ -55,16 +55,16 @@ struct Tile {
 		return true;
 	}
 	bool blacklisted(unsigned char const bll) {
-		for (size_t i = 0; i < sizeof(tiledata); i++) {
-			if (tiledata[i] == bll) {
+		for (auto & elem : tiledata) {
+			if (elem == bll) {
 				return true;
 			}
 		}
 		return false;
 	}
 	void remap(int const *colormap) {
-		for (size_t i = 0; i < sizeof(tiledata); i++) {
-			tiledata[i] = colormap[tiledata[i]];
+		for (auto & elem : tiledata) {
+			elem = colormap[elem];
 		}
 	}
 	void write(ostream &out) {
@@ -87,9 +87,9 @@ void recolor(istream &in, ostream &out, int const *colormap) {
 
 int main(int argc, char *argv[]) {
 	static option long_options[] = {
-		{"format"      , required_argument, 0, 'o'},
-		{"moduled"     , optional_argument, 0, 'm'},
-		{0, 0, 0, 0}
+		{"format"      , required_argument, nullptr, 'o'},
+		{"moduled"     , optional_argument, nullptr, 'm'},
+		{nullptr, 0, nullptr, 0}
 	};
 
 	bool moduled = false;
@@ -135,7 +135,7 @@ int main(int argc, char *argv[]) {
 			case 'm':
 				moduled = true;
 				if (optarg) {
-					modulesize = strtoul(optarg, 0, 0);
+					modulesize = strtoul(optarg, nullptr, 0);
 				}
 				break;
 

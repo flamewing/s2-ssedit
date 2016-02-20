@@ -42,9 +42,8 @@ void frame_mapping::write(ostream &out, int ver) const {
 	} else {
 		BigEndian::Write2(out, maps.size());
 	}
-	for (vector<single_mapping>::const_iterator it = maps.begin();
-	        it != maps.end(); ++it) {
-		it->write(out, ver);
+	for (const auto & elem : maps) {
+		elem.write(out, ver);
 	}
 }
 
@@ -73,9 +72,7 @@ void frame_mapping::split(frame_mapping const &src, frame_dplc &dplc) {
 	// Coalesce the mappings tiles into tile ranges, reodering adjacent DPLCs
 	// that are neighbours in art to coalesce the ranges as needed.
 	vector<pair<size_t, size_t>> ranges;
-	for (vector<single_mapping>::const_iterator it = src.maps.begin();
-	        it != src.maps.end(); ++it) {
-		single_mapping const &sd = *it;
+	for (const auto & sd : src.maps) {
 		size_t ss = sd.get_tile(), sz = sd.get_sx() * sd.get_sy();
 		if (ranges.empty()) {
 			// Happens only once. Hopefully, the compiler will pull this out of
@@ -128,7 +125,7 @@ void frame_mapping::split(frame_mapping const &src, frame_dplc &dplc) {
 		single_dplc nd;
 		nd.set_tile(ss);
 		nd.set_cnt(sz);
-		set<single_dplc>::iterator sit = uniquedplcs.find(nd);
+		auto sit = uniquedplcs.find(nd);
 		if (sit == uniquedplcs.end()) {
 			newdplc.insert(nd);
 			uniquedplcs.insert(nd);
@@ -137,9 +134,7 @@ void frame_mapping::split(frame_mapping const &src, frame_dplc &dplc) {
 	dplc.consolidate(newdplc);
 
 	set<size_t> loaded_tiles;
-	for (vector<single_mapping>::const_iterator it = src.maps.begin();
-	        it != src.maps.end(); ++it) {
-		single_mapping const &sd = *it;
+	for (const auto & sd : src.maps) {
 		single_mapping nn;
 		single_dplc dd;
 		nn.split(sd, dd, vram_map);
@@ -151,9 +146,7 @@ void frame_mapping::merge(frame_mapping const &src, frame_dplc const &dplc) {
 	map<size_t, size_t> vram_map;
 	dplc.build_vram_map(vram_map);
 
-	for (vector<single_mapping>::const_iterator it = src.maps.begin();
-	        it != src.maps.end(); ++it) {
-		single_mapping const &sd = *it;
+	for (const auto & sd : src.maps) {
 		single_mapping nn;
 		nn.merge(sd, vram_map);
 		maps.push_back(nn);
@@ -161,9 +154,8 @@ void frame_mapping::merge(frame_mapping const &src, frame_dplc const &dplc) {
 }
 
 void frame_mapping::change_pal(int srcpal, int dstpal) {
-	for (vector<single_mapping>::iterator it = maps.begin();
-	        it != maps.end(); ++it) {
-		it->change_pal(srcpal, dstpal);
+	for (auto & elem : maps) {
+		elem.change_pal(srcpal, dstpal);
 	}
 }
 

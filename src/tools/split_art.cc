@@ -34,14 +34,14 @@ using namespace std;
 struct Tile {
 	unsigned char tiledata[32];
 	bool read(istream &in) {
-		for (size_t i = 0; i < sizeof(tiledata); i++) {
-			tiledata[i] = in.get();
+		for (auto & elem : tiledata) {
+			elem = in.get();
 		}
 		return true;
 	}
 	void write(ostream &out) {
-		for (size_t i = 0; i < sizeof(tiledata); i++) {
-			out.put(tiledata[i]);
+		for (auto & elem : tiledata) {
+			out.put(elem);
 		}
 	}
 };
@@ -61,10 +61,10 @@ static void usage(char *prog) {
 
 int main(int argc, char *argv[]) {
 	static option long_options[] = {
-		{"kosm"  , no_argument      , 0, 'm'},
-		{"comper", no_argument      , 0, 'c'},
-		{"sonic" , required_argument, 0, 'z'},
-		{0, 0, 0, 0}
+		{"kosm"  , no_argument      , nullptr, 'm'},
+		{"comper", no_argument      , nullptr, 'c'},
+		{"sonic" , required_argument, nullptr, 'z'},
+		{nullptr, 0, nullptr, 0}
 	};
 
 	int compress = 0;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 				compress = 2;
 				break;
 			case 'z':
-				sonicver = strtoul(optarg, 0, 0);
+				sonicver = strtoul(optarg, nullptr, 0);
 				if (sonicver < 1 || sonicver > 4) {
 					sonicver = 2;
 				}
@@ -127,8 +127,8 @@ int main(int argc, char *argv[]) {
 	vector<Tile> tiles;
 	tiles.resize(size / 32);
 
-	for (size_t ii = 0; ii < tiles.size(); ii++) {
-		tiles[ii].read(inart);
+	for (auto & tile : tiles) {
+		tile.read(inart);
 	}
 	inart.close();
 
