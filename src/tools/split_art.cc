@@ -74,8 +74,9 @@ int main(int argc, char *argv[]) {
 		int option_index = 0;
 		int c = getopt_long(argc, argv, "cm",
 		                    long_options, &option_index);
-		if (c == -1)
+		if (c == -1) {
 			break;
+		}
 
 		switch (c) {
 			case 'c':
@@ -94,8 +95,9 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'z':
 				sonicver = strtoul(optarg, 0, 0);
-				if (sonicver < 1 || sonicver > 4)
+				if (sonicver < 1 || sonicver > 4) {
 					sonicver = 2;
+				}
 				break;
 		}
 	}
@@ -129,11 +131,11 @@ int main(int argc, char *argv[]) {
 		tiles[ii].read(inart);
 	}
 	inart.close();
-	
+
 	dplc_file srcdplc;
 	srcdplc.read(indplc, sonicver);
 	indplc.close();
-	
+
 	for (size_t ii = 0; ii < srcdplc.size(); ii++) {
 		stringstream buffer(ios::in | ios::out | ios::binary);
 		frame_dplc const &frame = srcdplc.get_dplc(ii);
@@ -146,7 +148,7 @@ int main(int argc, char *argv[]) {
 		stringstream fname(ios::in | ios::out);
 		fname << argv[optind + 2] << hex << setw(2)
 		      << setfill('0') << ii << ".bin";
-		ofstream fout(fname.str().c_str(), ios::in|ios::out|ios::binary|ios::trunc);
+		ofstream fout(fname.str().c_str(), ios::in | ios::out | ios::binary | ios::trunc);
 		if (!fout.good()) {
 			cerr << "Output file '" << fname.str() << "' could not be opened." << endl << endl;
 			return 4;

@@ -138,8 +138,9 @@ int main(int argc, char *argv[]) {
 		int option_index = 0;
 		int c = getopt_long(argc, argv, "osmfckidp:a:0",
 		                    long_options, &option_index);
-		if (c == -1)
+		if (c == -1) {
 			break;
+		}
 
 		switch (c) {
 			case '0':
@@ -147,28 +148,31 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'x':
 				fromsonicver = strtoul(optarg, 0, 0);
-				if (fromsonicver < 1 || fromsonicver > 4)
+				if (fromsonicver < 1 || fromsonicver > 4) {
 					fromsonicver = 2;
+				}
 				break;
 			case 'y':
 				tosonicver = strtoul(optarg, 0, 0);
-				if (tosonicver < 1 || tosonicver > 4)
+				if (tosonicver < 1 || tosonicver > 4) {
 					tosonicver = 2;
+				}
 				break;
 			case 'z':
 				fromsonicver = tosonicver = strtoul(optarg, 0, 0);
-				if (fromsonicver < 1 || fromsonicver > 4)
+				if (fromsonicver < 1 || fromsonicver > 4) {
 					fromsonicver = tosonicver = 2;
+				}
 				break;
-			ARG_CASE('o', eOptimize, 4,)
-			ARG_CASE('s', eSplit, 3,)
-			ARG_CASE('m', eMerge, 3,)
-			ARG_CASE('f', eFix, 2,)
-			ARG_CASE('c', eConvert, 2,)
-			ARG_CASE('k', eConvertDPLC, 2,)
-			ARG_CASE('i', eInfo, 1,)
-			ARG_CASE('d', eDplc, 1,)
-			ARG_CASE('p', ePalChange, 2, srcpal = (strtoul(optarg, 0, 0) & 3) << 5)
+				ARG_CASE('o', eOptimize, 4,)
+				ARG_CASE('s', eSplit, 3,)
+				ARG_CASE('m', eMerge, 3,)
+				ARG_CASE('f', eFix, 2,)
+				ARG_CASE('c', eConvert, 2,)
+				ARG_CASE('k', eConvertDPLC, 2,)
+				ARG_CASE('i', eInfo, 1,)
+				ARG_CASE('d', eDplc, 1,)
+				ARG_CASE('p', ePalChange, 2, srcpal = (strtoul(optarg, 0, 0) & 3) << 5)
 			case 'a':
 				if (act != ePalChange) {
 					usage();

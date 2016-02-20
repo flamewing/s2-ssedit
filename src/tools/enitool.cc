@@ -55,17 +55,20 @@ int main(int argc, char *argv[]) {
 	while (true) {
 		int option_index = 0;
 		int c = getopt_long(argc, argv, "sb:p:", long_options, &option_index);
-		if (c == -1)
+		if (c == -1) {
 			break;
+		}
 
 		switch (c) {
 			case 'p':
-				if (optarg)
+				if (optarg) {
 					paldelta = static_cast<unsigned short>((strtoul(optarg, 0, 0) & 3) << 13);
+				}
 				break;
 			case 'b':
-				if (optarg)
+				if (optarg) {
 					blacklist.insert(static_cast<unsigned short>(strtoul(optarg, 0, 0) & 0x7FF));
+				}
 				break;
 			case 's':
 				sizeOnly = true;
@@ -100,7 +103,7 @@ int main(int argc, char *argv[]) {
 
 	if (sizeOnly) {
 		inbuffer.seekg(0, ios::end);
-		cout << inbuffer.tellg()/2 << endl;
+		cout << inbuffer.tellg() / 2 << endl;
 	} else {
 		ofstream fout(argv[optind], ios::out | ios::binary);
 		if (!fout.good()) {

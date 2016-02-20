@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SINGLEDPLC_H_
-#define _SINGLEDPLC_H_
+#ifndef __LIB_SINGLEDPLC_H
+#define __LIB_SINGLEDPLC_H
 
 #include <iosfwd>
 
@@ -55,12 +55,14 @@ public:
 		tile = t;
 	}
 	bool operator<(single_dplc const &rhs) const {
-		if (cnt < rhs.cnt)
+		if (cnt < rhs.cnt) {
 			return true;
-		else if (cnt > rhs.cnt)
+		} else if (cnt > rhs.cnt) {
 			return false;
-		if (tile < rhs.tile)
+		}
+		if (tile < rhs.tile) {
 			return true;
+		}
 		return false;
 	}
 	bool operator==(single_dplc const &rhs) const {
@@ -68,4 +70,4 @@ public:
 	}
 };
 
-#endif // _SINGLEDPLC_H_
+#endif // __LIB_SINGLEDPLC_H

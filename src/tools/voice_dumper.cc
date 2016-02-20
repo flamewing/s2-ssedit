@@ -50,8 +50,9 @@ int main(int argc, char *argv[]) {
 		int option_index = 0;
 		int c = getopt_long(argc, argv, "x:v:",
 		                    long_options, &option_index);
-		if (c == -1)
+		if (c == -1) {
 			break;
+		}
 
 		switch (c) {
 			case 'x':

@@ -66,8 +66,9 @@ int main(int argc, char *argv[]) {
 				if (xpos == 128 * 128) {
 					xpos = 0;
 					planeA = !planeA;
-					if (planeA)
+					if (planeA) {
 						ypos += 128;
+					}
 				}
 			}
 			cout << argv[ii] << ": " << dec << cnt << endl;

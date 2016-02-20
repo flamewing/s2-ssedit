@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DPLCFILE_H_
-#define _DPLCFILE_H_
+#ifndef __LIB_DPLCFILE_H
+#define __LIB_DPLCFILE_H
 
 #include <iosfwd>
 #include <vector>
@@ -41,4 +41,4 @@ public:
 	size_t size(int ver) const;
 };
 
-#endif // _DPLCFILE_H_
+#endif // __LIB_DPLCFILE_H
