@@ -25,16 +25,7 @@
 #include "fmvoice.h"
 #include <string>
 
-#ifdef UNUSED
-#elif defined(__GNUC__)
-#	define UNUSED(x) UNUSED_ ## x __attribute__((unused))
-#elif defined(__LCLINT__)
-#	define UNUSED(x) /*@unused@*/ x
-#elif defined(__cplusplus)
-#	define UNUSED(x)
-#else
-#	define UNUSED(x) x
-#endif
+#include "ignore_unused_variable_warning.h"
 
 struct LocTraits {
 	int loc;
@@ -118,11 +109,14 @@ public:
 class NullNote : public BaseNote {
 public:
 	NullNote() : BaseNote(0, 0) {  }
-	void print(std::ostream &UNUSED(out), int UNUSED(sonicver),
-	           LocTraits::LocType UNUSED(tracktype),
-	           std::multimap<int, std::string> &UNUSED(labels),
-	           bool UNUSED(s3kmode)) const override
-	{       }
+	void print(std::ostream &out, int sonicver, LocTraits::LocType tracktype,
+	           std::multimap<int, std::string> &labels, bool s3kmode) const override {
+		ignore_unused_variable_warning(out);
+		ignore_unused_variable_warning(sonicver);
+		ignore_unused_variable_warning(tracktype);
+		ignore_unused_variable_warning(labels);
+		ignore_unused_variable_warning(s3kmode);
+	}
 };
 
 class FMVoice : public BaseNote {

@@ -35,6 +35,7 @@
 #include "bigendian_io.h"
 #include "songtrack.h"
 #include "fmvoice.h"
+#include "ignore_unused_variable_warning.h"
 
 using namespace std;
 
@@ -65,12 +66,14 @@ struct S1IO {
 	}
 
 	template <typename T>
-	static inline int read_pointer(T &in, int UNUSED(base)) {
+	static inline int read_pointer(T &in, int base) {
+		ignore_unused_variable_warning(base);
 		int ptr = int(in.tellg()) + 1;
 		return static_cast<short>(Read2(in)) + ptr;
 	}
 
-	static inline int int2headerpointer(int val, int UNUSED(base)) {
+	static inline int int2headerpointer(int val, int base) {
+		ignore_unused_variable_warning(base);
 		return static_cast<unsigned short>(val);
 	}
 };

@@ -43,8 +43,10 @@ void BaseNote::force_linebreak(ostream &out, bool force) {
 	notesprinted = 0;
 }
 
-void BaseNote::write(ostream &UNUSED(out), int UNUSED(sonicver),
-                     size_t UNUSED(offset)) const {
+void BaseNote::write(ostream &out, int sonicver, size_t offset) const {
+	ignore_unused_variable_warning(out);
+	ignore_unused_variable_warning(sonicver);
+	ignore_unused_variable_warning(offset);
 }
 
 void Duration::print(ostream &out,
@@ -79,11 +81,11 @@ FMVoice::FMVoice(istream &in, int sonicver, int n)
 	voc.read(in, sonicver);
 }
 
-void FMVoice::print(ostream &out,
-                    int sonicver,
-                    LocTraits::LocType UNUSED(tracktype),
-                    multimap<int, string> &UNUSED(labels),
-                    bool UNUSED(s3kmode)) const {
+void FMVoice::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                    multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	voc.print(out, sonicver, id);
 }
 
@@ -161,11 +163,11 @@ static void print_dac_sample(ostream &out, int val, int sonicver, bool flag) {
 	}
 }
 
-void DACNote::print(ostream &out,
-                    int sonicver,
-                    LocTraits::LocType UNUSED(tracktype),
-                    multimap<int, string> &UNUSED(labels),
-                    bool UNUSED(s3kmode)) const {
+void DACNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                    multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	last_note = this;
 	need_rest = false;
 
@@ -182,11 +184,10 @@ void DACNote::print(ostream &out,
 	}
 }
 
-void FMPSGNote::print(ostream &out,
-                      int sonicver,
-                      LocTraits::LocType tracktype,
-                      multimap<int, string> &UNUSED(labels),
-                      bool UNUSED(s3kmode)) const {
+void FMPSGNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                      multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	last_note = this;
 	need_rest = false;
 
@@ -258,11 +259,11 @@ void FMPSGNote::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlagNoParams<noret>::print(ostream &out,
-                                     int sonicver,
-                                     LocTraits::LocType UNUSED(tracktype),
-                                     multimap<int, string> &UNUSED(labels),
-                                     bool UNUSED(s3kmode)) const {
+void CoordFlagNoParams<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                     multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	// Note-like macros:
 	string s;
 	bool notelike = false;
@@ -379,11 +380,10 @@ void BaseNote::print_psg_tone(ostream &out, int tone, int sonicver,
 }
 
 template<bool noret>
-void CoordFlag1ParamByte<noret>::print(ostream &out,
-                                       int sonicver,
-                                       LocTraits::LocType tracktype,
-                                       multimap<int, string> &UNUSED(labels),
-                                       bool UNUSED(s3kmode)) const {
+void CoordFlag1ParamByte<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                       multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -535,11 +535,12 @@ void CoordFlag1ParamByte<noret>::print(ostream &out,
 	out << endl;
 }
 
-void CoordFlagChgKeydisp::print(ostream &out,
-                                int UNUSED(sonicver),
-                                LocTraits::LocType UNUSED(tracktype),
-                                multimap<int, string> &UNUSED(labels),
-                                bool UNUSED(s3kmode)) const {
+void CoordFlagChgKeydisp::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(sonicver);
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -551,11 +552,11 @@ void CoordFlagChgKeydisp::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlag2ParamBytes<noret>::print(ostream &out,
-                                        int sonicver,
-                                        LocTraits::LocType UNUSED(tracktype),
-                                        multimap<int, string> &UNUSED(labels),
-                                        bool UNUSED(s3kmode)) const {
+void CoordFlag2ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                        multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -611,11 +612,11 @@ void CoordFlag2ParamBytes<noret>::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlag3ParamBytes<noret>::print(ostream &out,
-                                        int sonicver,
-                                        LocTraits::LocType UNUSED(tracktype),
-                                        multimap<int, string> &UNUSED(labels),
-                                        bool UNUSED(s3kmode)) const {
+void CoordFlag3ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                        multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -654,11 +655,11 @@ void CoordFlag3ParamBytes<noret>::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlag4ParamBytes<noret>::print(ostream &out,
-                                        int sonicver,
-                                        LocTraits::LocType UNUSED(tracktype),
-                                        multimap<int, string> &UNUSED(labels),
-                                        bool UNUSED(s3kmode)) const {
+void CoordFlag4ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                        multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -702,11 +703,11 @@ void CoordFlag4ParamBytes<noret>::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlag5ParamBytes<noret>::print(ostream &out,
-                                        int sonicver,
-                                        LocTraits::LocType UNUSED(tracktype),
-                                        multimap<int, string> &UNUSED(labels),
-                                        bool UNUSED(s3kmode)) const {
+void CoordFlag5ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                        multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(labels);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -747,11 +748,11 @@ void CoordFlag5ParamBytes<noret>::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlagPointerParam<noret>::print(ostream &out,
-        int UNUSED(sonicver),
-        LocTraits::LocType UNUSED(tracktype),
-        multimap<int, string> &labels,
-        bool UNUSED(s3kmode)) const {
+void CoordFlagPointerParam<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                         multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(sonicver);
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -772,11 +773,10 @@ void CoordFlagPointerParam<noret>::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlagPointer1ParamByte<noret>::print(ostream &out,
-        int sonicver,
-        LocTraits::LocType UNUSED(tracktype),
-        multimap<int, string> &labels,
-        bool UNUSED(s3kmode)) const {
+void CoordFlagPointer1ParamByte<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                              multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -809,11 +809,10 @@ void CoordFlagPointer1ParamByte<noret>::print(ostream &out,
 }
 
 template<bool noret>
-void CoordFlagPointer2ParamBytes<noret>::print(ostream &out,
-        int sonicver,
-        LocTraits::LocType UNUSED(tracktype),
-        multimap<int, string> &labels,
-        bool UNUSED(s3kmode)) const {
+void CoordFlagPointer2ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+                                               multimap<int, string> &labels, bool s3kmode) const {
+	ignore_unused_variable_warning(tracktype);
+	ignore_unused_variable_warning(s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}

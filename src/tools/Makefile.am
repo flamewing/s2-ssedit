@@ -57,7 +57,9 @@ smps2asm_SOURCES = \
 	fmvoice.cc\
 	fmvoice.h \
 	songtrack.cc \
-	songtrack.h
+	songtrack.h \
+	../lib/ignore_unused_variable_warning.h \
+	../lib/ignore_unused_variable_warning.h
 
 smps2asm_CXXFLAGS = \
 	-I$(srcdir)/../lib
@@ -84,7 +86,8 @@ mapping_tool_CXXFLAGS = \
 	-I$(srcdir)/../lib
 
 plane_map_SOURCES = \
-	plane_map.cc
+	plane_map.cc \
+	../lib/ignore_unused_variable_warning.h
 
 plane_map_LDFLAGS = \
 	$(builddir)/../lib/libenigma.la

@@ -26,6 +26,7 @@
 
 #include "bigendian_io.h"
 #include "enigma.h"
+#include "ignore_unused_variable_warning.h"
 
 using namespace std;
 
@@ -86,7 +87,8 @@ typedef pair<Position const, unsigned short> Enigma_entry;
 typedef map<Position, unsigned short> Enigma_map;
 
 static void plane_unmap(istream &src, ostream &dst,
-                        streamsize UNUSED(pointer), bool sonic2) {
+                        streamsize pointer, bool sonic2) {
+	ignore_unused_variable_warning(pointer);
 	streamsize next_loc = src.tellg();
 	streamsize last_loc = BigEndian::Read2(src);
 	src.seekg(0, ios::end);
