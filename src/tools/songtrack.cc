@@ -43,12 +43,12 @@ void BaseNote::force_linebreak(ostream &out, bool force) {
 	notesprinted = 0;
 }
 
-void BaseNote::write(ostream &out, int sonicver, size_t offset) const {
-	ignore_unused_variable_warning(out, sonicver, offset);
+void BaseNote::write(ostream &out, int sonicver, int dacver, int psgver, size_t offset) const {
+	ignore_unused_variable_warning(out, sonicver, dacver, psgver, offset);
 }
 
 void Duration::print(ostream &out,
-                     int sonicver,
+                     int sonicver, int dacver, int psgver,
                      LocTraits::LocType tracktype,
                      multimap<int, string> &labels,
                      bool s3kmode) const {
@@ -57,7 +57,7 @@ void Duration::print(ostream &out,
 	// need this to fix playback of rests when porting from S1/S2 to S3+.
 	if ((tracktype == LocTraits::eFMTrack || tracktype == LocTraits::ePSGTrack)
 	        && s3kmode && last_note && last_note->is_rest() && need_rest) {
-		last_note->print(out, sonicver, tracktype, labels, s3kmode);
+		last_note->print(out, sonicver, dacver, psgver, tracktype, labels, s3kmode);
 	}
 
 	need_rest = true;
@@ -79,13 +79,13 @@ FMVoice::FMVoice(istream &in, int sonicver, int n)
 	voc.read(in, sonicver);
 }
 
-void FMVoice::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void FMVoice::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                     multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, labels, s3kmode);
 	voc.print(out, sonicver, id);
 }
 
-static void print_dac_sample(ostream &out, int val, int sonicver, bool flag) {
+static void print_dac_sample(ostream &out, int val, int dacver, bool flag) {
 	static string s12daclut[] = {
 		"nRst", "dKick", "dSnare", "dClap", "dScratch", "dTimpani", "dHiTom",
 		"dVLowClap", "dHiTimpani", "dMidTimpani", "dLowTimpani", "dVLowTimpani",
@@ -144,24 +144,24 @@ static void print_dac_sample(ostream &out, int val, int sonicver, bool flag) {
 	};
 
 	size_t note = val - 0x80;
-	if (sonicver == 5 && note <= sizeof(s3ddaclut) / sizeof(s3ddaclut[0])) {
+	if (dacver == 5 && note <= sizeof(s3ddaclut) / sizeof(s3ddaclut[0])) {
 		PrintName(out, s3ddaclut[note], flag);
-	} else if (sonicver == 4 && note <= sizeof(skdaclut) / sizeof(skdaclut[0])) {
+	} else if (dacver == 4 && note <= sizeof(skdaclut) / sizeof(skdaclut[0])) {
 		PrintName(out, skdaclut[note], flag);
-	} else if (sonicver == 3 && note <= sizeof(s3daclut) / sizeof(s3daclut[0])) {
+	} else if (dacver == 3 && note <= sizeof(s3daclut) / sizeof(s3daclut[0])) {
 		PrintName(out, s3daclut[note], flag);
-	} else if (sonicver == 1 && (note < 0x4 || (note >= 0x8 && note <= 0xb))) {
+	} else if (dacver == 1 && (note < 0x4 || (note >= 0x8 && note <= 0xb))) {
 		PrintName(out, s12daclut[note], flag);
-	} else if (sonicver == 2 && note <= sizeof(s12daclut) / sizeof(s12daclut[0])) {
+	} else if (dacver == 2 && note <= sizeof(s12daclut) / sizeof(s12daclut[0])) {
 		PrintName(out, s12daclut[note], flag);
 	} else {
 		PrintHex2Pre(out, val, flag);
 	}
 }
 
-void DACNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void DACNote::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                     multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(sonicver, psgver, tracktype, labels, s3kmode);
 	last_note = this;
 	need_rest = false;
 
@@ -170,7 +170,7 @@ void DACNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
 		out << "\tdc.b\t";
 	}
 
-	print_dac_sample(out, val, sonicver, notesprinted == 0);
+	print_dac_sample(out, val, dacver, notesprinted == 0);
 
 	if (++notesprinted == 12) {
 		out << endl;
@@ -178,9 +178,9 @@ void DACNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
 	}
 }
 
-void FMPSGNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void FMPSGNote::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                       multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(labels, s3kmode);
+	ignore_unused_variable_warning(sonicver, dacver, labels, s3kmode);
 	last_note = this;
 	need_rest = false;
 
@@ -205,11 +205,11 @@ void FMPSGNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
 	bool workAround = false;
 	if ((tracktype == LocTraits::ePSGInit || tracktype == LocTraits::ePSGTrack) && val != 0x80) {
 		unsigned char newbyte = (val + keydisp) & 0x7f;
-		if (sonicver >= 3 && (newbyte == 0x53 || newbyte == 0x54)) {
+		if (psgver >= 3 && (newbyte == 0x53 || newbyte == 0x54)) {
 			noteName = newbyte == 0x54 ? "nMaxPSG2" : "nMaxPSG1";
-		} else if (sonicver <= 2 && newbyte == 0x46) {
+		} else if (psgver <= 2 && newbyte == 0x46) {
 			noteName = "nMaxPSG";
-		} else if (sonicver == 1 && (newbyte & 1) == 0 && newbyte >= 0x4c) {
+		} else if (psgver == 1 && (newbyte & 1) == 0 && newbyte >= 0x4c) {
 			// Workaround for xm2smps/xm3smps/xm4smps songs.
 			workAround = true;
 			noteName = "nMaxPSG";
@@ -252,9 +252,9 @@ void FMPSGNote::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
 }
 
 template<bool noret>
-void CoordFlagNoParams<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlagNoParams<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                      multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, labels, s3kmode);
 	// Note-like macros:
 	string s;
 	bool notelike = false;
@@ -349,14 +349,14 @@ void CoordFlagNoParams<noret>::print(ostream &out, int sonicver, LocTraits::LocT
 	}
 }
 
-void BaseNote::print_psg_tone(ostream &out, int tone, int sonicver,
+void BaseNote::print_psg_tone(ostream &out, int tone, int psgver,
                               bool last) {
 	if (tone == 0) {
 		PrintHex2(out, tone, true);
 		return;
 	}
 
-	if (sonicver >= 3) {
+	if (psgver >= 3) {
 		out << "sTone_";
 	} else {
 		out << "fTone_";
@@ -371,9 +371,9 @@ void BaseNote::print_psg_tone(ostream &out, int tone, int sonicver,
 }
 
 template<bool noret>
-void CoordFlag1ParamByte<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlag1ParamByte<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                        multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, labels, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -514,20 +514,20 @@ void CoordFlag1ParamByte<noret>::print(ostream &out, int sonicver, LocTraits::Lo
 		}
 		PrintHex2(out, param & 0x3f, true);
 	} else if (val == 0xf5) {
-		BaseNote::print_psg_tone(out, param, sonicver, true);
+		BaseNote::print_psg_tone(out, param, psgver, true);
 	} else if (sonicver >= 3 && val == 0xef && tracktype == LocTraits::ePSGTrack) {
-		BaseNote::print_psg_tone(out, param, sonicver, true);
+		BaseNote::print_psg_tone(out, param, psgver, true);
 	} else if (sonicver >= 3 && val == 0xea) {
-		print_dac_sample(out, param, sonicver, true);
+		print_dac_sample(out, param, dacver, true);
 	} else {
 		PrintHex2(out, param, true);
 	}
 	out << endl;
 }
 
-void CoordFlagChgKeydisp::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlagChgKeydisp::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                 multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(sonicver, tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(sonicver, dacver, psgver, tracktype, labels, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -539,9 +539,9 @@ void CoordFlagChgKeydisp::print(ostream &out, int sonicver, LocTraits::LocType t
 }
 
 template<bool noret>
-void CoordFlag2ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlag2ParamBytes<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                         multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, labels, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -597,9 +597,9 @@ void CoordFlag2ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::L
 }
 
 template<bool noret>
-void CoordFlag3ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlag3ParamBytes<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                         multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, labels, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -638,9 +638,9 @@ void CoordFlag3ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::L
 }
 
 template<bool noret>
-void CoordFlag4ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlag4ParamBytes<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                         multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, labels, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -684,9 +684,9 @@ void CoordFlag4ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::L
 }
 
 template<bool noret>
-void CoordFlag5ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlag5ParamBytes<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                         multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, labels, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, labels, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -727,9 +727,9 @@ void CoordFlag5ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::L
 }
 
 template<bool noret>
-void CoordFlagPointerParam<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlagPointerParam<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                          multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(sonicver, tracktype, s3kmode);
+	ignore_unused_variable_warning(sonicver, dacver, psgver, tracktype, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -750,9 +750,9 @@ void CoordFlagPointerParam<noret>::print(ostream &out, int sonicver, LocTraits::
 }
 
 template<bool noret>
-void CoordFlagPointer1ParamByte<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlagPointer1ParamByte<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                               multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -785,9 +785,9 @@ void CoordFlagPointer1ParamByte<noret>::print(ostream &out, int sonicver, LocTra
 }
 
 template<bool noret>
-void CoordFlagPointer2ParamBytes<noret>::print(ostream &out, int sonicver, LocTraits::LocType tracktype,
+void CoordFlagPointer2ParamBytes<noret>::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                                                multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(tracktype, s3kmode);
+	ignore_unused_variable_warning(dacver, psgver, tracktype, s3kmode);
 	if (notesprinted != 0) {
 		out << endl;
 	}
@@ -865,22 +865,22 @@ void InstantiateTemplates() {
 	CoordFlagPointer1ParamByte<false> ffp1(0, 0, 0, 0);
 	CoordFlagPointer2ParamBytes<true > ftp2(0, 0, 0, 0, 0);
 	CoordFlagPointer2ParamBytes<false> ffp2(0, 0, 0, 0, 0);
-	ft0.print(cout, 1, LocTraits::eHeader, labels, false);
-	ff0.print(cout, 1, LocTraits::eHeader, labels, false);
-	ft1.print(cout, 1, LocTraits::eHeader, labels, false);
-	ff1.print(cout, 1, LocTraits::eHeader, labels, false);
-	ft2.print(cout, 1, LocTraits::eHeader, labels, false);
-	ff2.print(cout, 1, LocTraits::eHeader, labels, false);
-	ft3.print(cout, 1, LocTraits::eHeader, labels, false);
-	ff3.print(cout, 1, LocTraits::eHeader, labels, false);
-	ft4.print(cout, 1, LocTraits::eHeader, labels, false);
-	ff4.print(cout, 1, LocTraits::eHeader, labels, false);
-	ft5.print(cout, 1, LocTraits::eHeader, labels, false);
-	ff5.print(cout, 1, LocTraits::eHeader, labels, false);
-	ftp0.print(cout, 1, LocTraits::eHeader, labels, false);
-	ffp0.print(cout, 1, LocTraits::eHeader, labels, false);
-	ftp1.print(cout, 1, LocTraits::eHeader, labels, false);
-	ffp1.print(cout, 1, LocTraits::eHeader, labels, false);
-	ftp2.print(cout, 1, LocTraits::eHeader, labels, false);
-	ffp2.print(cout, 1, LocTraits::eHeader, labels, false);
+	ft0.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ff0.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ft1.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ff1.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ft2.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ff2.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ft3.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ff3.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ft4.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ff4.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ft5.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ff5.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ftp0.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ffp0.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ftp1.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ffp1.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ftp2.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
+	ffp2.print(cout, 1, 1, 1, LocTraits::eHeader, labels, false);
 }

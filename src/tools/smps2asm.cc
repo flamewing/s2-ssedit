@@ -384,12 +384,12 @@ class DumpSmps {
 	istream &in;
 	ostream &out;
 	string const &projname;
-	int sonicver, startloc, offset, len;
+	int sonicver, dacver, psgver, startloc, offset, len;
 	bool sfx, s3kmode;
 public:
-	DumpSmps(istream &i, ostream &o, int s, int off,
+	DumpSmps(istream &i, ostream &o, int s, int d, int p, int off,
 	         string const &nm, bool tf, bool s3km)
-		: in(i), out(o), projname(nm), sonicver(s), offset(off), sfx(tf), s3kmode(s3km) {
+		: in(i), out(o), projname(nm), sonicver(s), dacver(d), psgver(p), offset(off), sfx(tf), s3kmode(s3km) {
 		startloc = in.tellg();
 		in.seekg(0, ios::end);
 		len = in.tellg();
@@ -603,7 +603,7 @@ public:
 				PrintHex2(out, keydisp, false);
 				PrintHex2(out, initvol, false);
 				PrintHex2(out, modctrl, false);
-				BaseNote::print_psg_tone(out, tone, sonicver, true);
+				BaseNote::print_psg_tone(out, tone, psgver, true);
 				out << endl;
 
 				// Add to queue.
@@ -785,7 +785,7 @@ public:
 			auto ty = explored.find(off);
 			//assert(ty != explored.end());
 			if (ty != explored.end()) {
-				note->print(out, sonicver, ty->second, labels, s3kmode);
+				note->print(out, sonicver, dacver, psgver, ty->second, labels, s3kmode);
 			}
 		}
 
@@ -869,6 +869,12 @@ static void usage() {
 	     << "\t             \tSMPS type. {version} can be '1' Sonic 1, '2' for Sonic 2 or" << endl
 	     << "\t             \t'3' for Sonic 3, '4' for Sonic & Knuckles, or '5' for Sonic" << endl
 	     << "\t             \t3D Blast." << endl;
+	cerr << "\t-d,--dacver  \tSets DAC version to {version}. {version} can be '1' Sonic 1," << endl
+	     << "\t             \t'2' for Sonic 2, '3' for Sonic 3, '4' for Sonic & Knuckles," << endl
+	     << "\t             \tor '5' for Sonic 3D Blast." << endl;
+	cerr << "\t-p,--psgver  \tSets PSG version to {version}. {version} can be '1' Sonic 1," << endl
+	     << "\t             \t'2' for Sonic 2, '3' for Sonic 3, '4' for Sonic & Knuckles," << endl
+	     << "\t             \tor '5' for Sonic 3D Blast." << endl;
 	cerr << "\t-3,--s3kmode \tThis flag is valid for Sonic 1 and Sonic 2 only; this will" << endl
 	     << "\t             \tcause all sequences of durations after a rest to be printed" << endl
 	     << "\t             \twith the rests shown explicitly." << endl
@@ -882,7 +888,7 @@ static void usage() {
 void dump_single_entry
 (
     istream &in, ostream &out, string const &projname,
-    int pointer, int offset, int sonicver, bool saxman, bool sfx, bool s3kmode
+    int pointer, int offset, int sonicver, int dacver, int psgver, bool saxman, bool sfx, bool s3kmode
 ) {
 
 	if (pointer) {
@@ -914,10 +920,10 @@ void dump_single_entry
 	}
 
 	if (sonicver == 1) {
-		DumpSmps<S1IO> smps(*src, out, sonicver, offset, projname, sfx, s3kmode);
+		DumpSmps<S1IO> smps(*src, out, sonicver, dacver, psgver, offset, projname, sfx, s3kmode);
 		smps.dump_smps();
 	} else {
-		DumpSmps<SNIO> smps(*src, out, sonicver, offset, projname, sfx, s3kmode);
+		DumpSmps<SNIO> smps(*src, out, sonicver, dacver, psgver, offset, projname, sfx, s3kmode);
 		smps.dump_smps();
 	}
 }
@@ -929,17 +935,19 @@ int main(int argc, char *argv[]) {
 		{"saxman"  , no_argument      , nullptr, 'u'},
 		{"offset"  , required_argument, nullptr, 'o'},
 		{"sonicver", required_argument, nullptr, 'v'},
+		{"dacver"  , required_argument, nullptr, 'd'},
+		{"psgver"  , required_argument, nullptr, 'p'},
 		{"sfx"     , no_argument      , nullptr, 's'},
 		{"s3kmode" , no_argument      , nullptr, '3'},
 		{nullptr, 0, nullptr, 0}
 	};
 
 	bool sfx = false, saxman = false, s3kmode = false, bankmode = false;
-	int pointer = 0, offset = 0, ptrtable = 0, sonicver = -1;
+	int pointer = 0, offset = 0, ptrtable = 0, sonicver = -1, dacver = -1, psgver = -1;
 
 	while (true) {
 		int option_index = 0;
-		int c = getopt_long(argc, argv, "b::x::uo:v:s3",
+		int c = getopt_long(argc, argv, "b::x::uo:v:d:p:s3",
 		                    long_options, &option_index);
 		if (c == -1) {
 			break;
@@ -973,6 +981,18 @@ int main(int argc, char *argv[]) {
 
 			case 'v':
 				sonicver = strtoul(optarg, nullptr, 0);
+				if (dacver == -1)
+					dacver = sonicver;
+				if (psgver == -1)
+					psgver = sonicver;
+				break;
+
+			case 'd':
+				dacver = strtoul(optarg, nullptr, 0);
+				break;
+
+			case 'p':
+				psgver = strtoul(optarg, nullptr, 0);
 				break;
 
 			case '3':
@@ -1031,13 +1051,13 @@ int main(int argc, char *argv[]) {
 		for (unsigned ii = 0; ii < ptrtable.size(); ii++) {
 			snprintf(buf, sizeof(buf), fmt, ii);
 			dump_single_entry(fin, fout, projname + buf, ptrtable[ii] & 0x7FFF,
-			                  0, sonicver, saxman, sfx, s3kmode);
+			                  0, sonicver, dacver, psgver, saxman, sfx, s3kmode);
 			if (ii + 1 < ptrtable.size()) {
 				fout << endl;
 			}
 		}
 	} else {
 		dump_single_entry(fin, fout, projname, pointer, offset, sonicver,
-		                  saxman, sfx, s3kmode);
+		                  dacver, psgver, saxman, sfx, s3kmode);
 	}
 }
