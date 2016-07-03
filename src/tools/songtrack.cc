@@ -180,7 +180,7 @@ void DACNote::print(ostream &out, int sonicver, int dacver, int psgver, LocTrait
 
 void FMPSGNote::print(ostream &out, int sonicver, int dacver, int psgver, LocTraits::LocType tracktype,
                       multimap<int, string> &labels, bool s3kmode) const {
-	ignore_unused_variable_warning(sonicver, dacver, labels, s3kmode);
+	ignore_unused_variable_warning(psgver, dacver, labels, s3kmode);
 	last_note = this;
 	need_rest = false;
 
@@ -205,11 +205,11 @@ void FMPSGNote::print(ostream &out, int sonicver, int dacver, int psgver, LocTra
 	bool workAround = false;
 	if ((tracktype == LocTraits::ePSGInit || tracktype == LocTraits::ePSGTrack) && val != 0x80) {
 		unsigned char newbyte = (val + keydisp) & 0x7f;
-		if (psgver >= 3 && (newbyte == 0x53 || newbyte == 0x54)) {
+		if (sonicver >= 3 && (newbyte == 0x53 || newbyte == 0x54)) {
 			noteName = newbyte == 0x54 ? "nMaxPSG2" : "nMaxPSG1";
-		} else if (psgver <= 2 && newbyte == 0x46) {
+		} else if (sonicver <= 2 && newbyte == 0x46) {
 			noteName = "nMaxPSG";
-		} else if (psgver == 1 && (newbyte & 1) == 0 && newbyte >= 0x4c) {
+		} else if (sonicver == 1 && (newbyte & 1) == 0 && newbyte >= 0x4c) {
 			// Workaround for xm2smps/xm3smps/xm4smps songs.
 			workAround = true;
 			noteName = "nMaxPSG";
