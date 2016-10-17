@@ -32,7 +32,7 @@ using namespace std;
 struct RocketAdaptor {
 	typedef unsigned char stream_t;
 	typedef unsigned char descriptor_t;
-	typedef bigendian<descriptor_t> descriptor_endian_t;
+	typedef littleendian<descriptor_t> descriptor_endian_t;
 	// Number of bits on descriptor bitfield.
 	constexpr static size_t const NumDescBits = sizeof(descriptor_t) * 8;
 	// Number of bits used in descriptor bitfield to signal the end-of-file
