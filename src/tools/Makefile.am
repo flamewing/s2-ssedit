@@ -12,7 +12,8 @@ bin_PROGRAMS = \
 	compcmp \
 	saxcmp \
 	split_art \
-	enitool
+	enitool \
+	rockcmp
 
 voice_dumper_SOURCES = \
 	fmvoice.cc    \
@@ -129,6 +130,15 @@ enitool_LDFLAGS = \
 	$(builddir)/../lib/libenigma.la
 
 enitool_CXXFLAGS = \
+	-I$(srcdir)/../lib
+
+rockcmp_SOURCES = \
+	rockcmp.cc
+
+rockcmp_LDFLAGS = \
+	$(builddir)/../lib/librocket.la
+
+rockcmp_CXXFLAGS = \
 	-I$(srcdir)/../lib
 
 AM_CXXFLAGS = 

@@ -5,7 +5,8 @@ lib_LTLIBRARIES = \
 	libnemesis.la \
 	libmappings.la \
 	libcomper.la \
-	libsaxman.la
+	libsaxman.la \
+	librocket.la
 
 libmappings_la_SOURCES = \
 	singledplc.h \
@@ -69,6 +70,14 @@ libenigma_la_SOURCES = \
 	enigma.h
 
 libenigma_la_LIBADD = 
+
+librocket_la_SOURCES = \
+	bigendian_io.h\
+	bitstream.h \
+	enigma.cc \
+	enigma.h
+
+librocket_la_LIBADD = 
 
 AM_CPPFLAGS = $(S2SSEDIT_CFLAGS)
 
